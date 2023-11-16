@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'LandingScene.dart';
+import 'Statistics.dart';
+import 'TimerList.dart';
+import 'Timer.dart';
 
 void main() {
 //debugPaintSizeEnabled=true;
@@ -14,6 +17,9 @@ class App extends StatelessWidget {
       theme: ThemeData(primarySwatch: Colors.red, useMaterial3: false),
       routes: <String, WidgetBuilder>{
         '/': (BuildContext ctx) => LandingScene(),
+        '/timerlist': (BuildContext ctx) => TimerList(),
+        '/timer': (BuildContext ctx) => Timer(),
+        '/statistics': (BuildContext ctx) => Statistics(),
       },
       debugShowCheckedModeBanner: false,
     );

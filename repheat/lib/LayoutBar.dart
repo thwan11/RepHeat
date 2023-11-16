@@ -27,14 +27,29 @@ class LayoutAppBar extends StatelessWidget {
     return build(context);
   }
 }
-class LayoutBottomNavigationBar extends StatelessWidget {
+
+class LayoutBottomNavigationBar extends StatefulWidget {
+  int currentIndex;
+  final Function(int) onTap;
+
+  LayoutBottomNavigationBar({required this.currentIndex, required this.onTap});
+
+  @override
+  _LayoutBottomNavigationBarState createState() => _LayoutBottomNavigationBarState();
+}
+
+class _LayoutBottomNavigationBarState extends State<LayoutBottomNavigationBar> {
   @override
   Widget build(BuildContext context) {
+    List<dynamic> iconColors = [ColorSet['white'], ColorSet['white'], ColorSet['white']];
+    iconColors[widget.currentIndex] = ColorSet['gray'];
     return BottomNavigationBar(
+      currentIndex: widget.currentIndex,
+      onTap: widget.onTap,
       items: [
-        BottomNavigationBarItem(icon: Icon(Icons.timer_outlined, color: ColorSet['white'], ), label: ''),
-        BottomNavigationBarItem(icon: Icon(Icons.storage_outlined, color: ColorSet['white'],), label: ''),
-        BottomNavigationBarItem(icon: Icon(Icons.show_chart_outlined, color: ColorSet['white'],), label: '')
+        BottomNavigationBarItem(icon: Icon(Icons.timer_outlined, color: iconColors[0], ), label: ''),
+        BottomNavigationBarItem(icon: Icon(Icons.storage_outlined, color: iconColors[1]), label: ''),
+        BottomNavigationBarItem(icon: Icon(Icons.show_chart_outlined, color: iconColors[2],), label: '')
       ],
       backgroundColor: ColorSet['black'],
     );
