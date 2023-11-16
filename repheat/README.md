@@ -1,6 +1,6 @@
 # repheat
 
-Heat yourself with RepHeat!
+A new Flutter project.
 
 ## Getting Started
 
