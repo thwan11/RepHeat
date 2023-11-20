@@ -41,8 +41,8 @@ class LayoutBottomNavigationBar extends StatefulWidget {
 class _LayoutBottomNavigationBarState extends State<LayoutBottomNavigationBar> {
   @override
   Widget build(BuildContext context) {
-    List<dynamic> iconColors = [ColorSet['white'], ColorSet['white'], ColorSet['white']];
-    iconColors[widget.currentIndex] = ColorSet['gray'];
+    List<dynamic> iconColors = [ColorSet['gray'], ColorSet['gray'], ColorSet['gray']];
+    iconColors[widget.currentIndex] = ColorSet['white'];
     return BottomNavigationBar(
       currentIndex: widget.currentIndex,
       onTap: widget.onTap,
