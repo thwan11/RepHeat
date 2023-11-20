@@ -13,31 +13,39 @@ class LandingScene extends StatefulWidget {
 
 class _LandingSceneState extends State<LandingScene> {
   int _currentIndex = 1;
-  List<Widget> _children = []; // _children을 여기서 초기화하지 않고, 데이터를 읽은 후에 초기화합니다.
+  List<Widget> _children = [];
 
   @override
   void initState() {
     super.initState();
-    loadUserData().then((routineNames) {
+    loadUserData().then((routines) {
       setState(() {
         _children = [
           Timer(),
-          TimerList(routineNames: routineNames), // TimerList에 routineNames 전달
+          TimerList(routines: routines), // TimerList에 routines 전달
           Statistics()
         ];
       });
     });
   }
 
-  Future<List<String>> loadUserData() async {
+  Future<List<Map<String, dynamic>>> loadUserData() async {
     try {
       String jsonString = await rootBundle.loadString('assets/data/user.json');
       Map<String, dynamic> jsonMap = json.decode(jsonString);
-      List<dynamic> routines = jsonMap['dmkthwan11@gmail.com']['routines'];
-      return routines.map((routine) => routine['name'].toString()).toList();
+      // 'dmkthwan11@gmail.com' 사용자의 루틴 데이터를 가져옵니다.
+      var userRoutines = jsonMap['dmkthwan11@gmail.com']['routines'];
+      if (userRoutines != null) {
+        // 데이터가 존재하면 변환하여 반환합니다.
+        return List<Map<String, dynamic>>.from(userRoutines);
+      } else {
+        // 데이터가 없으면 빈 리스트를 반환합니다.
+        return [];
+      }
     } catch (e) {
       print('Error loading user data: $e');
-      return []; // 오류 발생 시 빈 리스트 반환
+      // 오류 발생 시 빈 리스트를 반환합니다.
+      return [];
     }
   }
 
