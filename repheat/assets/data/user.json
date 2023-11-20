@@ -1,0 +1,103 @@
+{
+    "dmkthwan11@gmail.com": {
+        "firstname": "태환",
+        "lastname": "김",
+        "routines": [
+            {
+                "name": "러닝",
+                "iter": 8,
+                "subroutines": [
+                    {
+                        "name": "달리기",
+                        "hour": 0,
+                        "minute": 10,
+                        "second": 0
+                    },
+                    {
+                        "name": "걷기",
+                        "hour": 0,
+                        "minute": 1,
+                        "second": 30
+                    }
+                ]
+            },
+            {
+                "name": "뽀모도로",
+                "iter": 0, "주석": "무한대는 0으로 표현",
+                "subroutines": [
+                    {
+                        "name": "공부",
+                        "hour": 0,
+                        "minute": 25,
+                        "second": 0
+                    },
+                    {
+                        "name": "휴식",
+                        "hour": 0,
+                        "minute": 5,
+                        "second": 0
+                    }
+                ]
+            }
+        ],
+        "history": {
+            "2023": {
+                "09": {
+                    "29": 2,
+                    "30": 1
+                },
+                "10": {
+                    "2": 3
+                }
+            }
+        }
+    },
+    "mklol@gmail.com": {
+        "firstname": "수완",
+        "lastname": "윤",
+        "routines": [
+            {
+                "name": "러닝",
+                "iter": 8,
+                "subroutines": [
+                    {
+                        "name": "달리기",
+                        "hour": 0,
+                        "minute": 10,
+                        "second": 0
+                    },
+                    {
+                        "name": "걷기",
+                        "hour": 0,
+                        "minute": 1,
+                        "second": 30
+                    }
+                ]
+            }
+        ]
+    },
+    "caukdk@gmail.com": {
+        "firstname": "동건",
+        "lastname": "김",
+        "routines": [
+            {
+                "name": "뽀모도로",
+                "iter": 0, "주석": "무한대는 0으로 표현",
+                "subroutines": [
+                    {
+                        "name": "공부",
+                        "hour": 0,
+                        "minute": 25,
+                        "second": 0
+                    },
+                    {
+                        "name": "휴식",
+                        "hour": 0,
+                        "minute": 5,
+                        "second": 0
+                    }
+                ]
+            }
+        ]
+    }
+}
