@@ -12,7 +12,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'RepHeat',
-      theme: ThemeData(primarySwatch: Colors.red, useMaterial3: false),
+      theme: ThemeData(primarySwatch: Colors.grey, useMaterial3: false),
       routes: <String, WidgetBuilder>{
         '/': (BuildContext ctx) => LandingScene(),
         // '/timerlist' 라우트는 제거하고, LandingScene 내부에서 TimerList를 관리합니다.
