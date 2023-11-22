@@ -45,8 +45,8 @@ class _TimerListState extends State<TimerList> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
-        child: Icon(Icons.add, color: ColorSet['white']),
-        backgroundColor: ColorSet['black'],
+        child: Text('+', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w100)),
+        backgroundColor: ColorSet['white'],
       ),
     );
   }
