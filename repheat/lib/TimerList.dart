@@ -67,23 +67,23 @@ class _TimerListState extends State<TimerList> {
     double ffem = fem * 0.97;
     String iter = (routine['iter'] > 0) ? routine['iter'].toString() : '∞';
     String title = '${routine["name"]}x$iter';
-    int fontSize = 28;
+    int fontSize = 27;
     int routineTime = 0;
     String routineTimeString = '';
     int totalTime = 0;
-    String totalTimeString = '      ∞     ';
+    String totalTimeString = '∞';
 
     switch(title.length){
       case 11:  // 표시되는 최대 길이 제목:8, x:1, 횟수:2
-        fontSize = 18;
+        fontSize = 17;
       case 10:
-        fontSize = 20;
+        fontSize = 29;
       case 9:
-        fontSize = 22;
+        fontSize = 21;
       case 8:
-        fontSize = 24;
+        fontSize = 23;
       case 7:
-        fontSize = 26;
+        fontSize = 25;
     }
 
     routine['subroutines'].forEach((sub) => routineTime += (sub['hour']*3600 + sub['minute']*60 + sub['second']) as int);
@@ -117,27 +117,57 @@ class _TimerListState extends State<TimerList> {
                   color: ColorSet['white']
               ),
             ),
-            Column(
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  '1회 ${routineTimeString}',
-                  style: TextStyle(
-                      fontSize: 16*ffem,
-                      fontWeight: FontWeight.w400,
-                      height: 1.2125*ffem/fem,
-                      color: ColorSet['white']
-                  ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      '1회 ',
+                      style: TextStyle(
+                          fontSize: 16*ffem,
+                          fontWeight: FontWeight.w400,
+                          height: 1.2125*ffem/fem,
+                          color: ColorSet['white']
+                      ),
+                    ),
+                    Text(
+                      '전체 ',
+                      style: TextStyle(
+                          fontSize: 16*ffem,
+                          fontWeight: FontWeight.w400,
+                          height: 1.2125*ffem/fem,
+                          color: ColorSet['white']
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  '전체 ${totalTimeString}',
-                  style: TextStyle(
-                      fontSize: 16*ffem,
-                      fontWeight: FontWeight.w400,
-                      height: 1.2125*ffem/fem,
-                      color: ColorSet['white']
-                  ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      routineTimeString,
+                      style: TextStyle(
+                          fontSize: 16*ffem,
+                          fontWeight: FontWeight.w400,
+                          height: 1.2125*ffem/fem,
+                          color: ColorSet['white']
+                      ),
+                    ),
+                    Text(
+                      totalTimeString,
+                      style: TextStyle(
+                          fontSize: 16*ffem,
+                          fontWeight: FontWeight.w400,
+                          height: 1.2125*ffem/fem,
+                          color: ColorSet['white']
+                      ),
+                    ),
+                  ],
                 ),
               ],
             )
