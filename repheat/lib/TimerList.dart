@@ -45,7 +45,7 @@ class _TimerListState extends State<TimerList> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
-        child: Text('+', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w100)),
+        child: Text('+', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w400)),
         backgroundColor: ColorSet['white'],
       ),
     );
@@ -74,7 +74,7 @@ class _TimerListState extends State<TimerList> {
     String totalTimeString = '      ∞     ';
 
     switch(title.length){
-      case 11:
+      case 11:  // 표시되는 최대 길이 제목:8, x:1, 횟수:2
         fontSize = 18;
       case 10:
         fontSize = 20;
