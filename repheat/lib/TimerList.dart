@@ -17,42 +17,83 @@ class _TimerListState extends State<TimerList> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorSet['gray'],
-      body: Container(
-        alignment: Alignment.center,
-        child: Column(
-          children: List<Widget>.generate(widget.routines.length, (index) {
-            var routine = widget.routines[index];
-            var subroutines = routine['subroutines'] as List<dynamic>;
-            return Column(
-              children: [
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      selectedBoxIndex = selectedBoxIndex == index ? null : index;
-                    });
-                  },
-                  child: bigBox(context, routine['name']),
-                ),
-                if (selectedBoxIndex == index) ...subroutines.map((sub) {
-                  return littleBox(context, sub['name']);
-                }).toList(),
-              ],
-            );
-          }),
+      body: SingleChildScrollView( // Wrap with SingleChildScrollView
+        child: Container(
+          alignment: Alignment.center,
+          child: Column(
+            children: List<Widget>.generate(widget.routines.length, (index) {
+              var routine = widget.routines[index];
+              var subroutines = routine['subroutines'] as List<dynamic>;
+              return Column(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        selectedBoxIndex = selectedBoxIndex == index ? null : index;
+                      });
+                    },
+                    child: bigBox(context, routine),
+                  ),
+                  if (selectedBoxIndex == index) ...subroutines.map((sub) {
+                    return littleBox(context, sub);
+                  }).toList(),
+                ],
+              );
+            }),
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){},
-        child: Icon(Icons.add, color: ColorSet['white']),
-        backgroundColor: ColorSet['black'],
+        onPressed: () {},
+        child: Text('+', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w400)),
+        backgroundColor: ColorSet['white'],
       ),
     );
   }
 
-  Widget bigBox(BuildContext context, String title) {
+  String timeToString(int time) {
+    int hour = 0;
+    int minute = 0;
+    int second = 0;
+    second = time % 60;
+    minute = (time ~/ 60) % 60;
+    hour = (time ~/ 60) ~/ 60;
+    return '${hour.toString().padLeft(2, "0")}:${minute.toString().padLeft(2, "0")}:${second.toString().padLeft(2, "0")}';
+  }
+
+  Widget bigBox(BuildContext context, dynamic routine) {
     double baseWidth = 360;
     double fem = MediaQuery.of(context).size.width / baseWidth;
     double ffem = fem * 0.97;
+    String iter = (routine['iter'] > 0) ? routine['iter'].toString() : '∞';
+    String title = '${routine["name"]}x$iter';
+    int fontSize = 28;
+    int routineTime = 0;
+    String routineTimeString = '';
+    int totalTime = 0;
+    String totalTimeString = '      ∞     ';
+
+    switch(title.length){
+      case 11:  // 표시되는 최대 길이 제목:8, x:1, 횟수:2
+        fontSize = 18;
+      case 10:
+        fontSize = 20;
+      case 9:
+        fontSize = 22;
+      case 8:
+        fontSize = 24;
+      case 7:
+        fontSize = 26;
+    }
+
+    routine['subroutines'].forEach((sub) => routineTime += (sub['hour']*3600 + sub['minute']*60 + sub['second']) as int);
+    routineTimeString = timeToString(routineTime);
+
+    if (routine['iter'] > 0){
+      totalTime = routineTime * routine['iter'] as int;
+      totalTimeString = timeToString(totalTime);
+    }
+
     return Container(
       padding: EdgeInsets.fromLTRB(0, 10*fem, 0, 2*fem),
       child: Container(
@@ -70,7 +111,7 @@ class _TimerListState extends State<TimerList> {
             Text(
               title, // '달리기' 대신에 제공된 title 사용
               style: TextStyle(
-                  fontSize: 32*ffem,
+                  fontSize: fontSize*ffem,
                   fontWeight: FontWeight.w400,
                   height: 1.2125*ffem/fem,
                   color: ColorSet['white']
@@ -81,7 +122,7 @@ class _TimerListState extends State<TimerList> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  '1회 00:00:00',
+                  '1회 ${routineTimeString}',
                   style: TextStyle(
                       fontSize: 16*ffem,
                       fontWeight: FontWeight.w400,
@@ -90,7 +131,7 @@ class _TimerListState extends State<TimerList> {
                   ),
                 ),
                 Text(
-                  '전체 00:00:00',
+                  '전체 ${totalTimeString}',
                   style: TextStyle(
                       fontSize: 16*ffem,
                       fontWeight: FontWeight.w400,
@@ -106,7 +147,7 @@ class _TimerListState extends State<TimerList> {
     );
   }
 
-  Widget littleBox(BuildContext context, String subtitle) {
+  Widget littleBox(BuildContext context, dynamic sub) {
     double baseWidth = 360;
     double fem = MediaQuery.of(context).size.width / baseWidth;
     double ffem = fem * 0.97;
@@ -125,7 +166,7 @@ class _TimerListState extends State<TimerList> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              subtitle, // '달리기' 대신에 제공된 subtitle 사용
+              sub['name'], // '달리기' 대신에 제공된 subtitle 사용
               style: TextStyle(
                   fontSize: 16*ffem,
                   fontWeight: FontWeight.w400,
@@ -134,7 +175,7 @@ class _TimerListState extends State<TimerList> {
               ),
             ),
             Text(
-                '00:10:00',
+                '${sub["hour"].toString().padLeft(2, "0")}:${sub["minute"].toString().padLeft(2, "0")}:${sub["second"].toString().padLeft(2, "0")}',
                 style: TextStyle(
                     fontSize: 16*ffem,
                     fontWeight: FontWeight.w400,
