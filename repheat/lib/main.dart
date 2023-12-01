@@ -18,7 +18,7 @@ class App extends StatelessWidget {
         // '/timerlist' 라우트는 제거하고, LandingScene 내부에서 TimerList를 관리합니다.
         '/timer': (BuildContext ctx) => Timer(),
         '/statistics': (BuildContext ctx) => Statistics(),
-      },
+      },//open new branch KDK
       debugShowCheckedModeBanner: false,
     );
   }
