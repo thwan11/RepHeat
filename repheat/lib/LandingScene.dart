@@ -22,18 +22,18 @@ class _LandingSceneState extends State<LandingScene> {
   @override
   void initState() {
     super.initState();
-    loadUserData().then((routines) {
+    Future.wait([loadUserRoutine(), loadUserHistory()]).then((results) {
       setState(() {
         _children = [
           Timer(),
-          TimerList(routines: routines), // TimerList에 routines 전달
-          Statistics()
+          TimerList(routines: results[0] as List<Map<String, dynamic>>), // 첫 번째 결과 사용
+          Statistics(history: results[1] as Map<String, dynamic>) // 두 번째 결과 사용
         ];
       });
     });
   }
 
-  Future<List<Map<String, dynamic>>> loadUserData() async {
+  Future<List<Map<String, dynamic>>> loadUserRoutine() async {
     try {
       String jsonString = await rootBundle.loadString('assets/data/user_modified.json');
       Map<String, dynamic> jsonMap = json.decode(jsonString);
@@ -50,6 +50,26 @@ class _LandingSceneState extends State<LandingScene> {
       print('Error loading user data: $e');
       // 오류 발생 시 빈 리스트를 반환합니다.
       return [];
+    }
+  }
+
+  Future<Map<String, dynamic>> loadUserHistory() async {
+    try {
+      String jsonString = await rootBundle.loadString('assets/data/user_modified.json');
+      Map<String, dynamic> jsonMap = json.decode(jsonString);
+      // 'dmkthwan11@gmail.com' 사용자의 루틴 데이터를 가져옵니다.
+      var userHistory = jsonMap[email]['history'];
+      if (userHistory != null) {
+        // 데이터가 존재하면 변환하여 반환합니다.
+        return Map<String, dynamic>.from(userHistory);
+      } else {
+        // 데이터가 없으면 빈 리스트를 반환합니다.
+        return {};
+      }
+    } catch (e) {
+      print('Error loading user data: $e');
+      // 오류 발생 시 빈 리스트를 반환합니다.
+      return {};
     }
   }
 
@@ -80,12 +100,13 @@ class _LandingSceneState extends State<LandingScene> {
         loggedIn = true;
         email = user.email;
       });
-      loadUserData().then((routines) {
+      Future.wait([loadUserRoutine(), loadUserHistory()]).then((results) {
+        print(results[1]);
         setState(() {
           _children = [
             Timer(),
-            TimerList(routines: routines), // TimerList에 새로운 routines 전달
-            Statistics()
+            TimerList(routines: results[0] as List<Map<String, dynamic>>),
+            Statistics(history: results[1] as Map<String, dynamic>)
           ];
         });
       });
@@ -100,7 +121,7 @@ class _LandingSceneState extends State<LandingScene> {
       _children = [
         Timer(),
         TimerList(routines: []), // 비어있는 리스트 전달
-        Statistics()
+        Statistics(history: {})
       ];
     });
   }
