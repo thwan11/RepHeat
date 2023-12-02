@@ -2,7 +2,7 @@
     "dmkthwan11@gmail.com": {
         "firstname": "태환",
         "lastname": "김",
-      "routines": [
+        "routines": [
         {
           "name": "러닝",
           "iter": 8,
@@ -163,7 +163,7 @@
       ],
         "history": {
             "2023": {
-                "09": {
+                "9": {
                     "29": 2,
                     "30": 1
                 },
