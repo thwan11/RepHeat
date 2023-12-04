@@ -57,11 +57,19 @@ class _TimerListState extends State<TimerList> {
   Future<void> addTimerEvent(BuildContext context) {
     return showDialog(
         context: context,
+        barrierDismissible: true, //바깥 영역 터치 시 닫을지 여부, 현재 true
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('타이머 추가'),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5.0),
+              side: BorderSide(
+                color: Colors.grey,
+                width: 1.0,
+              ),
+            ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 TextField(
                   controller: titleController,
@@ -77,24 +85,31 @@ class _TimerListState extends State<TimerList> {
                 ),
               ],
             ),
-            actions: <Widget>[
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('cancel'),
-              ),
-              TextButton(
-                  child: Text('add'),
-                  onPressed: () {
-                    setState(() {
+
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // 창닫기
+                    },
+                    child: Text('취소'),
+                  ),
+                  ElevatedButton(
+                    child: Text('등록'),
+                    onPressed: () {
+                      setState(() {
                       String title = titleController.text;
                       String content = contentController.text;
                     });
                     Navigator.of(context).pop();
-                  },
+                    },
+                  ),
+                ],
               ),
             ],
+            backgroundColor: ColorSet['black'],
           );
         },
     );
