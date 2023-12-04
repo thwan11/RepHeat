@@ -44,10 +44,59 @@ class _TimerListState extends State<TimerList> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () => addTimerEvent(context),
         child: Text('+', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w400)),
         backgroundColor: ColorSet['white'],
       ),
+    );
+  }
+
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController contentController = TextEditingController();
+
+  Future<void> addTimerEvent(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('타이머 추가'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                TextField(
+                  controller: titleController,
+                  decoration: InputDecoration(
+                    labelText: '제목'
+                  ),
+                ),
+                TextField(
+                  controller: contentController,
+                  decoration: InputDecoration(
+                    labelText: '내용'
+                  ),
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('cancel'),
+              ),
+              TextButton(
+                  child: Text('add'),
+                  onPressed: () {
+                    setState(() {
+                      String title = titleController.text;
+                      String content = contentController.text;
+                    });
+                    Navigator.of(context).pop();
+                  },
+              ),
+            ],
+          );
+        },
     );
   }
 
