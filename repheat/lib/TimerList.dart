@@ -54,6 +54,8 @@ class _TimerListState extends State<TimerList> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController contentController = TextEditingController();
   int setiter = 1;
+  bool _isSound = false;
+  bool _isVibrate = false;
 
   Future<void> addTimerEvent(BuildContext context) {
     return showDialog(
@@ -86,62 +88,95 @@ class _TimerListState extends State<TimerList> {
                   ),
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text(
-                      'x$setiter',
-                      style: (
-                          TextStyle(
-                              fontSize: 30,
-                              color: ColorSet['white']
-                          )
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          'x$setiter',
+                          style: (
+                              TextStyle(
+                                  fontSize: 30,
+                                  color: ColorSet['white']
+                              )
+                          ),
+                        ),
+                        Column(
+                          children: [
+                            SizedBox(
+                              width: 20,
+                              height: 15,
+                              child: ElevatedButton(
+                                onPressed: (){
+                                  if(setiter < 98) {
+                                    setState(() {
+                                      setiter++;
+                                    });
+                                  };
+                                  },
+                                child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text('↑',
+                                    textAlign: TextAlign.left,
+                                    style: (
+                                        TextStyle(
+                                            fontSize: 5,
+                                            color: ColorSet['black']
+                                        )),
+
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            SizedBox(
+                              width: 20,
+                              height: 15,
+                              child: ElevatedButton(
+                                onPressed: (){
+                                  if(setiter > 1) {
+                                    setState(() {
+                                      setiter--;
+                                    });
+                                  };
+                                  },
+                                child: Text('↓',
+                                  textAlign: TextAlign.center,
+                                  style: (
+                                      TextStyle(
+                                          fontSize: 10,
+                                          color: ColorSet['black']
+                                      )
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                     Column(
                       children: [
-                        SizedBox(
-                          width: 20,
-                          height: 15,
-                          child: ElevatedButton(
-                            onPressed: (){
+                        Switch(
+                            value: _isSound,
+                            onChanged: (value) {
                               setState(() {
-                                setiter++;
+                                _isSound = value;
                               });
-                            },
-                            child: Text('↑',
-                              style: (
-                                  TextStyle(
-                                      fontSize: 10,
-                                      color: ColorSet['black']
-                                  )
-                              ),
-                            ),
-                          ),
+                            }
                         ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        SizedBox(
-                          width: 20,
-                          height: 15,
-                          child: ElevatedButton(
-                            onPressed: (){
+                        Switch(
+                            value: _isVibrate,
+                            onChanged: (value) {
                               setState(() {
-                                setiter--;
+                                _isVibrate = value;
                               });
-                            },
-                            child: Text('↓',
-                              style: (
-                                  TextStyle(
-                                      fontSize: 10,
-                                      color: ColorSet['black']
-                                  )
-                              ),
-                            ),
-                          ),
+                            }
                         ),
-
                       ],
-                    )
+                    ),
                   ],
                 ),
               ],
