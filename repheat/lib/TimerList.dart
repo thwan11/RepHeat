@@ -53,6 +53,7 @@ class _TimerListState extends State<TimerList> {
 
   final TextEditingController titleController = TextEditingController();
   final TextEditingController contentController = TextEditingController();
+  int setiter = 1;
 
   Future<void> addTimerEvent(BuildContext context) {
     return showDialog(
@@ -72,16 +73,76 @@ class _TimerListState extends State<TimerList> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 TextField(
+                  style: TextStyle(
+                    fontSize: 30,
+                    color: ColorSet['white']
+                  ),
                   controller: titleController,
+                  maxLength: 8,
                   decoration: InputDecoration(
-                    labelText: '제목'
+                    border: InputBorder.none,
+                    counterText: '',//count 안보이게 하면 8자 넘어서까지 입력되다가
+                    // 그 이상 입력한건 사라지더라, count 있는게 나을듯?
                   ),
                 ),
-                TextField(
-                  controller: contentController,
-                  decoration: InputDecoration(
-                    labelText: '내용'
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      'x$setiter',
+                      style: (
+                          TextStyle(
+                              fontSize: 30,
+                              color: ColorSet['white']
+                          )
+                      ),
+                    ),
+                    Column(
+                      children: [
+                        SizedBox(
+                          width: 20,
+                          height: 15,
+                          child: ElevatedButton(
+                            onPressed: (){
+                              setState(() {
+                                setiter++;
+                              });
+                            },
+                            child: Text('↑',
+                              style: (
+                                  TextStyle(
+                                      fontSize: 10,
+                                      color: ColorSet['black']
+                                  )
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        SizedBox(
+                          width: 20,
+                          height: 15,
+                          child: ElevatedButton(
+                            onPressed: (){
+                              setState(() {
+                                setiter--;
+                              });
+                            },
+                            child: Text('↓',
+                              style: (
+                                  TextStyle(
+                                      fontSize: 10,
+                                      color: ColorSet['black']
+                                  )
+                              ),
+                            ),
+                          ),
+                        ),
+
+                      ],
+                    )
+                  ],
                 ),
               ],
             ),
