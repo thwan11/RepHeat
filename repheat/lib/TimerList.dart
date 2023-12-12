@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'ColorScheme.dart';
+import 'LandingScene.dart';
+import '_Timer.dart';
 
 class TimerList extends StatefulWidget {
   final List<Map<String, dynamic>> routines; // Routines including subroutines
+  Function onTap;
+  Function changeRoutine;
 
-  TimerList({Key? key, required this.routines}) : super(key: key);
+  TimerList({Key? key, required this.routines, required this.onTap, required this.changeRoutine}) : super(key: key);
 
   @override
   _TimerListState createState() => _TimerListState();
 }
 
 class _TimerListState extends State<TimerList> {
+  final GlobalKey<TimerState> timer = GlobalKey();
   int? selectedBoxIndex;
 
   @override
@@ -32,7 +37,9 @@ class _TimerListState extends State<TimerList> {
                         selectedBoxIndex = selectedBoxIndex == index ? null : index;
                       });
                     },
-                    child: bigBox(context, routine),
+                    child: (selectedBoxIndex != index)
+                        ? bigBox(context, routine, false, index)
+                        :bigBox(context, routine, true, index),
                   ),
                   if (selectedBoxIndex == index) ...subroutines.map((sub) {
                     return littleBox(context, sub);
@@ -61,7 +68,7 @@ class _TimerListState extends State<TimerList> {
     return '${hour.toString().padLeft(2, "0")}:${minute.toString().padLeft(2, "0")}:${second.toString().padLeft(2, "0")}';
   }
 
-  Widget bigBox(BuildContext context, dynamic routine) {
+  Widget bigBox(BuildContext context, dynamic routine, bool isSelected, int index) {
     double baseWidth = 360;
     double fem = MediaQuery.of(context).size.width / baseWidth;
     double ffem = fem * 0.97;
@@ -120,7 +127,17 @@ class _TimerListState extends State<TimerList> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
+              children: isSelected
+                  ? [
+                ElevatedButton(
+                    onPressed: (){
+                        widget.onTap(0);
+                        widget.changeRoutine(index);
+                    },
+                    child: Icon(Icons.start)
+                )
+              ]
+                  :[
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.center,
