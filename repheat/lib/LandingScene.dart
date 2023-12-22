@@ -14,6 +14,7 @@ class LandingScene extends StatefulWidget {
 
 class LandingSceneState extends State<LandingScene> {
   final GlobalKey<TimerState> timer = GlobalKey();
+  final GlobalKey<LayoutAppBarState> layout = GlobalKey();
 
   int currentIndex = 1;
   List<Widget> _children = [];
@@ -99,7 +100,7 @@ class LandingSceneState extends State<LandingScene> {
       backgroundColor: ColorSet['gray'],
       appBar: PreferredSize(
         preferredSize: AppBar().preferredSize, // Use the same size as a regular AppBar
-        child: LayoutAppBar(signIn: signIn, signOut: signOut, loggedIn: loggedIn, email: email),
+        child: LayoutAppBar(key: layout, signIn: signIn, signOut: signOut, loggedIn: loggedIn, email: email, share: currentIndex),
       ),
       body: currentIndex < _children.length ? _children[currentIndex] : CircularProgressIndicator(),
       bottomNavigationBar: LayoutBottomNavigationBar(currentIndex: currentIndex, onTap: _onTap),

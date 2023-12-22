@@ -1,4 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
 import 'ColorScheme.dart';
 
 class LayoutAppBar extends StatefulWidget {
@@ -6,12 +11,14 @@ class LayoutAppBar extends StatefulWidget {
   Function signOut;
   bool loggedIn;
   String email;
-  LayoutAppBar({required this.signIn, required this.signOut, required this.loggedIn, required this.email});
+  int share;
+
+  LayoutAppBar({super.key, required this.signIn, required this.signOut, required this.loggedIn, required this.email, required this.share});
   @override
-  _LayoutAppBarState createState() => _LayoutAppBarState();
+  LayoutAppBarState createState() => LayoutAppBarState();
 }
 
-class _LayoutAppBarState extends State<LayoutAppBar> {
+class LayoutAppBarState extends State<LayoutAppBar> {
   @override
   Widget build(BuildContext context) {
     double baseWidth = 360;
@@ -35,6 +42,18 @@ class _LayoutAppBarState extends State<LayoutAppBar> {
           ),
           Text(widget.email, style: TextStyle(color: ColorSet['white'], fontSize: 13*ffem),),
           Spacer(),
+          if(widget.share == 2)
+            IconButton(
+              onPressed: () async {
+                // Directory documents = await getApplicationDocumentsDirectory();
+                // final imageFile = await screenshotController.captureAndSave('${documents.path}/ss.jpg');
+                // final result = await Share.shareXFiles([XFile('${documents.path}/ss.jpg')]);
+                // if (result.status == ShareResultStatus.success) {
+                //   print('Did you not like the pictures?');
+                // }
+              },
+              icon: Icon(Icons.share, color: ColorSet['white'])
+            ),
           IconButton(
             onPressed: () {},
             icon: Icon(Icons.settings, color: ColorSet['white']),
@@ -47,37 +66,6 @@ class _LayoutAppBarState extends State<LayoutAppBar> {
   }
 }
 
-// class LayoutAppBar extends StatelessWidget {
-//   @override
-//   PreferredSizeWidget build(BuildContext context) {
-//     return AppBar(
-//       title: Row(
-//         children: [
-//           IconButton(
-//             onPressed: signIn,
-//             icon: Icon(Icons.login, color: ColorSet['white'],)
-//           ),
-//           Spacer(),
-//           IconButton(
-//               onPressed: (){},
-//               icon: Icon(Icons.settings, color: ColorSet['white'],)
-//           ),
-//         ],
-//       ),
-//       backgroundColor: ColorSet['gray'],
-//       elevation: 0.0,
-//     );
-//   }
-//
-//   Future signIn() async {
-//     final user = await GoogleSignInApi.login();
-//     print(user?.email);
-//   }
-//
-//   PreferredSizeWidget toPreferredSizeWidget(BuildContext context) {
-//     return build(context);
-//   }
-// }
 
 class LayoutBottomNavigationBar extends StatefulWidget {
   int currentIndex;

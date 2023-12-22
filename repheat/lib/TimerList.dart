@@ -11,10 +11,10 @@ class TimerList extends StatefulWidget {
   TimerList({Key? key, required this.routines, required this.onTap, required this.changeRoutine}) : super(key: key);
 
   @override
-  _TimerListState createState() => _TimerListState();
+  TimerListState createState() => TimerListState();
 }
 
-class _TimerListState extends State<TimerList> {
+class TimerListState extends State<TimerList> {
   final GlobalKey<TimerState> timer = GlobalKey();
   int? selectedBoxIndex;
 
