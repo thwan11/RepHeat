@@ -110,7 +110,7 @@ class _TimerListState extends State<TimerList> {
                                 onPressed: (){
                                   if(setiter < 98) {
                                     setState(() {
-                                      setiter++;
+                                      setiter = setiter + 1;
                                     });
                                   };
                                   },
