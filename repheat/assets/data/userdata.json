@@ -82,11 +82,50 @@
         "history": {
             "2023": {
                 "09": {
-                    "29": 2,
-                    "30": 1
+                    "29": [
+                        {
+                            "name": "기록1",
+                            "hour": 0,
+                            "minute": 9,
+                            "second": 0
+                        },
+                        {
+                            "name": "천천히",
+                            "hour": 0,
+                            "minute": 1,
+                            "second": 0
+                        }
+                    ],
+                    "30": [
+                        {
+                            "name": "기록2",
+                            "hour": 0,
+                            "minute": 9,
+                            "second": 0
+                        },
+                        {
+                            "name": "천천히",
+                            "hour": 0,
+                            "minute": 1,
+                            "second": 0
+                        }
+                    ]
                 },
                 "10": {
-                    "2": 3
+                    "2": [
+                        {
+                            "name": "기록3",
+                            "hour": 0,
+                            "minute": 9,
+                            "second": 0
+                        },
+                        {
+                            "name": "천천히",
+                            "hour": 0,
+                            "minute": 1,
+                            "second": 0
+                        }
+                    ]
                 }
             }
         }
