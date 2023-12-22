@@ -60,15 +60,17 @@ class TimerListState extends State<TimerList> {
 
   final TextEditingController titleController = TextEditingController();
   final TextEditingController contentController = TextEditingController();
-  int setiter = 1;
-  bool _isSound = false;
-  bool _isVibrate = false;
 
   Future<void> addTimerEvent(BuildContext context) {
     return showDialog(
       context: context,
       barrierDismissible: true, //바깥 영역 터치 시 닫을지 여부, 현재 true
       builder: (BuildContext context) {
+
+        int setiter = 1;
+        bool _isSound = false;
+        bool _isVibrate = false;
+
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5.0),
@@ -77,119 +79,124 @@ class TimerListState extends State<TimerList> {
               width: 1.0,
             ),
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              TextField(
-                style: TextStyle(
-                    fontSize: 30,
-                    color: ColorSet['white']
-                ),
-                controller: titleController,
-                maxLength: 8,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  counterText: '',//count 안보이게 하면 8자 넘어서까지 입력되다가
-                  // 그 이상 입력한건 사라지더라, count 있는게 나을듯?
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        'x$setiter',
-                        style: (
-                            TextStyle(
-                                fontSize: 30,
-                                color: ColorSet['white']
-                            )
+          content: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    TextField(
+                      style: TextStyle(
+                          fontSize: 30,
+                          color: ColorSet['white']
+                      ),
+                      controller: titleController,
+                      maxLength: 8,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        counterText: '', //count 안보이게 하면 8자 넘어서까지 입력되다가
+                        // 그 이상 입력한건 사라지더라, count 있는게 나을듯?
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'x$setiter',
+                              style: (
+                                  TextStyle(
+                                      fontSize: 30,
+                                      color: ColorSet['white']
+                                  )
+                              ),
+                            ),
+                            Column(
+                              children: [
+                                SizedBox(
+                                  width: 20,
+                                  height: 15,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      if (setiter < 98) {
+                                        setState(() {
+                                          setiter = setiter + 1;
+                                        });
+                                      };
+                                    },
+                                    child: Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Text('↑',
+                                        textAlign: TextAlign.left,
+                                        style: (
+                                            TextStyle(
+                                                fontSize: 5,
+                                                color: ColorSet['black']
+                                            )),
+
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                SizedBox(
+                                  width: 20,
+                                  height: 15,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      if (setiter > 1) {
+                                        setState(() {
+                                          setiter--;
+                                        });
+                                      };
+                                    },
+                                    child: Text('↓',
+                                      textAlign: TextAlign.center,
+                                      style: (
+                                          TextStyle(
+                                              fontSize: 10,
+                                              color: ColorSet['black']
+                                          )
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                      ),
-                      Column(
-                        children: [
-                          SizedBox(
-                            width: 20,
-                            height: 15,
-                            child: ElevatedButton(
-                              onPressed: (){
-                                if(setiter < 98) {
+                        Column(
+                          children: [
+                            Switch(
+                                value: _isSound,
+                                onChanged: (value) {
                                   setState(() {
-                                    setiter = setiter + 1;
+                                    _isSound = value;
                                   });
-                                };
-                              },
-                              child: Align(
-                                alignment: Alignment.topLeft,
-                                child: Text('↑',
-                                  textAlign: TextAlign.left,
-                                  style: (
-                                      TextStyle(
-                                          fontSize: 5,
-                                          color: ColorSet['black']
-                                      )),
-
-                                ),
-                              ),
+                                }
                             ),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          SizedBox(
-                            width: 20,
-                            height: 15,
-                            child: ElevatedButton(
-                              onPressed: (){
-                                if(setiter > 1) {
+                            Switch(
+                                value: _isVibrate,
+                                onChanged: (value) {
                                   setState(() {
-                                    setiter--;
+                                    _isVibrate = value;
                                   });
-                                };
-                              },
-                              child: Text('↓',
-                                textAlign: TextAlign.center,
-                                style: (
-                                    TextStyle(
-                                        fontSize: 10,
-                                        color: ColorSet['black']
-                                    )
-                                ),
-                              ),
+                                }
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Switch(
-                          value: _isSound,
-                          onChanged: (value) {
-                            setState(() {
-                              _isSound = value;
-                            });
-                          }
-                      ),
-                      Switch(
-                          value: _isVibrate,
-                          onChanged: (value) {
-                            setState(() {
-                              _isVibrate = value;
-                            });
-                          }
-                      ),
-                    ],
-                  ),
-                ],
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              }
               ),
-            ],
-          ),
 
-          actions: [
+
+            actions: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
