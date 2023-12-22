@@ -85,7 +85,7 @@ class TimerListState extends State<TimerList> {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    TextField(
+                    TextField(//루틴 이름 입력
                       style: TextStyle(
                           fontSize: 30,
                           color: ColorSet['white']
@@ -102,7 +102,7 @@ class TimerListState extends State<TimerList> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Row(
-                          children: [
+                          children: [//루틴 반복 횟수
                             Text(
                               'x$setiter',
                               style: (
@@ -112,7 +112,7 @@ class TimerListState extends State<TimerList> {
                                   )
                               ),
                             ),
-                            Column(
+                            Column(//루틴 반복 횟수 조절 버튼
                               children: [
                                 SizedBox(
                                   width: 20,
@@ -133,8 +133,8 @@ class TimerListState extends State<TimerList> {
                                             TextStyle(
                                                 fontSize: 5,
                                                 color: ColorSet['black']
-                                            )),
-
+                                            )
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -170,26 +170,79 @@ class TimerListState extends State<TimerList> {
                         ),
                         Column(
                           children: [
-                            Switch(
-                                value: _isSound,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _isSound = value;
-                                  });
-                                }
+                            Row(
+                              children: [
+                                Text('소리',
+                                  style: TextStyle(
+                                  color: ColorSet['white'],
+                                  ),
+                                ),
+                                Switch(
+                                    value: _isSound,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _isSound = value;
+                                      });
+                                    }
+                                ),
+                              ],
                             ),
-                            Switch(
-                                value: _isVibrate,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _isVibrate = value;
-                                  });
-                                }
+                            Row(
+                              children: [
+                                Text('진동',
+                                  style: TextStyle(
+                                    color: ColorSet['white'],
+                                  ),
+                                ),
+                                Switch(
+                                    value: _isVibrate,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _isVibrate = value;
+                                      });
+                                    }
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       ],
                     ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text('subroutine',
+                        style: TextStyle(
+                          color: ColorSet['white'],
+                        ),
+                        ),
+                        SizedBox(
+                          width: 20,
+                          height: 15,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (setiter < 98) {
+                                setState(() {
+                                  setiter = setiter + 1;
+                                });
+                              };
+                            },
+                            child: Align(
+                              alignment: Alignment.topLeft,
+                              child: Text('+',
+                                textAlign: TextAlign.left,
+                                style: (
+                                    TextStyle(
+                                        fontSize: 5,
+                                        color: ColorSet['black']
+                                    )
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
                   ],
                 );
               }
