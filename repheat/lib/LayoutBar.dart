@@ -1,6 +1,9 @@
+
+import 'dart:typed_data';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
@@ -13,7 +16,9 @@ class LayoutAppBar extends StatefulWidget {
   String email;
   int share;
 
-  LayoutAppBar({super.key, required this.signIn, required this.signOut, required this.loggedIn, required this.email, required this.share});
+  final VoidCallback? onSharePressed;
+
+  LayoutAppBar({super.key, required this.signIn, required this.signOut, required this.loggedIn, required this.email, required this.share, this.onSharePressed});
   @override
   LayoutAppBarState createState() => LayoutAppBarState();
 }
@@ -41,17 +46,10 @@ class LayoutAppBarState extends State<LayoutAppBar> {
             ),
           ),
           Text(widget.email, style: TextStyle(color: ColorSet['white'], fontSize: 13*ffem),),
-          Spacer(),
+          const Spacer(),
           if(widget.share == 2)
             IconButton(
-              onPressed: () async {
-                // Directory documents = await getApplicationDocumentsDirectory();
-                // final imageFile = await screenshotController.captureAndSave('${documents.path}/ss.jpg');
-                // final result = await Share.shareXFiles([XFile('${documents.path}/ss.jpg')]);
-                // if (result.status == ShareResultStatus.success) {
-                //   print('Did you not like the pictures?');
-                // }
-              },
+              onPressed: widget.onSharePressed,
               icon: Icon(Icons.share, color: ColorSet['white'])
             ),
           IconButton(
@@ -64,25 +62,35 @@ class LayoutAppBarState extends State<LayoutAppBar> {
       elevation: 0.0,
     );
   }
+
 }
 
 
 class LayoutBottomNavigationBar extends StatefulWidget {
   int currentIndex;
+  bool isVisible = true;
+
   final Function(int) onTap;
+  LayoutBottomNavigationBarState createState() => LayoutBottomNavigationBarState();
 
-  LayoutBottomNavigationBar({required this.currentIndex, required this.onTap});
-
-  @override
-  _LayoutBottomNavigationBarState createState() => _LayoutBottomNavigationBarState();
+  LayoutBottomNavigationBar({super.key, required this.currentIndex, required this.onTap});
 }
 
-class _LayoutBottomNavigationBarState extends State<LayoutBottomNavigationBar> {
+class LayoutBottomNavigationBarState extends State<LayoutBottomNavigationBar> {
+  bool isVisible = true; // 초기 가시성 상태
+
+  // 가시성을 토글하는 메소드
+  void toggleVisibility() {
+    setState(() {
+      isVisible = !isVisible;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     List<dynamic> iconColors = [ColorSet['gray'], ColorSet['gray'], ColorSet['gray']];
     iconColors[widget.currentIndex] = ColorSet['white'];
-    return BottomNavigationBar(
+    return isVisible ? BottomNavigationBar(
       currentIndex: widget.currentIndex,
       onTap: widget.onTap,
       items: [
@@ -91,7 +99,7 @@ class _LayoutBottomNavigationBarState extends State<LayoutBottomNavigationBar> {
         BottomNavigationBarItem(icon: Icon(Icons.show_chart_outlined, color: iconColors[2],), label: '')
       ],
       backgroundColor: ColorSet['black'],
-    );
+    ): SizedBox.shrink();
   }
   
 }

@@ -1,22 +1,75 @@
+import 'dart:typed_data';
+import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
 import 'ColorScheme.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import 'TimerList.dart';
 
-class Statistics extends StatelessWidget {
+class Statistics extends StatefulWidget {
+
   Map<String, dynamic> history;
-  Statistics({required this.history});
+  Statistics({super.key, required this.history});
+
+  @override
+  State<Statistics> createState() => StatisticsState();
+}
+
+class StatisticsState extends State<Statistics> {
+  GlobalKey repaintBoundaryKey = GlobalKey();
+
+  ScreenshotController screenshotController = ScreenshotController();
+
+  void captureImage() async {
+    RenderRepaintBoundary boundary =
+    repaintBoundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    var image = await boundary.toImage();
+    ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
+    Uint8List pngBytes = byteData!.buffer.asUint8List();
+
+    // Now you can use these bytes to save, share, etc.
+  }
+  void onShare() async {
+    try {
+      RenderRepaintBoundary boundary = repaintBoundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      var image = await boundary.toImage();
+      ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
+      Uint8List pngBytes = byteData!.buffer.asUint8List();
+
+      if (pngBytes != null) {
+        final directory = await getTemporaryDirectory();
+        final imagePath = await File('${directory.path}/statistics.png').create();
+        await imagePath.writeAsBytes(pngBytes);
+
+        Share.shareFiles([imagePath.path], text: 'Check out my statistics!');
+      }
+    } catch (e) {
+      print("Error capturing long widget: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorSet['gray'],
-      body: Container(
-          alignment: Alignment.topCenter,
-          child: TableCalendarScreen(history: history)
+    return Screenshot(
+      controller: screenshotController,
+      child: Scaffold(
+        backgroundColor: ColorSet['gray'],
+        body: SingleChildScrollView(
+          child: RepaintBoundary(
+            key: repaintBoundaryKey,
+            child: Container(
+                color: ColorSet['gray'],
+                alignment: Alignment.topCenter,
+                child: TableCalendarScreen(history: widget.history)
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -40,22 +93,11 @@ class _TableCalendarScreenState extends State<TableCalendarScreen> {
 
 
   int _numberOfWeeksInMonth(DateTime date) {
-    // Find the first day of the month
     DateTime firstDayOfMonth = DateTime(date.year, date.month, 1);
-
-    // Find the Sunday before the first day of the month
     DateTime startOfCalendarView = firstDayOfMonth.subtract(Duration(days: firstDayOfMonth.weekday % 7));
-
-    // Find the last day of the month
     DateTime lastDayOfMonth = DateTime(date.year, date.month + 1, 0);
-
-    // Find the Saturday after the last day of the month
     DateTime endOfCalendarView = lastDayOfMonth.add(Duration(days: DateTime.saturday - lastDayOfMonth.weekday % 7));
-
-    // Calculate the number of days in the calendar view
     int daysInView = endOfCalendarView.difference(startOfCalendarView).inDays + 1;
-
-    // Calculate the number of weeks
     return (daysInView / 7).ceil();
   }
 

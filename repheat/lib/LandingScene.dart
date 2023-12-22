@@ -8,13 +8,20 @@ import 'TimerList.dart';
 import '_Timer.dart';
 import 'GoogleSignIn.dart';
 
+
+import 'global.dart';
+
 class LandingScene extends StatefulWidget {
+  const LandingScene({super.key});
+
+  @override
   LandingSceneState createState() => LandingSceneState();
 }
 
 class LandingSceneState extends State<LandingScene> {
   final GlobalKey<TimerState> timer = GlobalKey();
   final GlobalKey<LayoutAppBarState> layout = GlobalKey();
+  final GlobalKey<StatisticsState> stat = GlobalKey();
 
   int currentIndex = 1;
   List<Widget> _children = [];
@@ -22,7 +29,7 @@ class LandingSceneState extends State<LandingScene> {
 
 
   bool loggedIn = false;
-  String email = '';
+  String email = 'dmkthwan11@gmail.com';
 
   late List<dynamic> routine;
 
@@ -32,9 +39,9 @@ class LandingSceneState extends State<LandingScene> {
     Future.wait([loadUserRoutine(), loadUserHistory()]).then((results) {
       setState(() {
         _children = [
-          Timers({}),
+          const Timers({}),
           TimerList(routines: results[0] as List<Map<String, dynamic>>, onTap: _onTap, changeRoutine: changeRoutine), // 첫 번째 결과 사용
-          Statistics(history: results[1] as Map<String, dynamic>) // 두 번째 결과 사용
+          Statistics(key: stat, history: results[1] as Map<String, dynamic>) // 두 번째 결과 사용
         ];
       });
     });
@@ -45,7 +52,7 @@ class LandingSceneState extends State<LandingScene> {
       String jsonString = await rootBundle.loadString('assets/data/user_modified.json');
       Map<String, dynamic> jsonMap = json.decode(jsonString);
       // 'dmkthwan11@gmail.com' 사용자의 루틴 데이터를 가져옵니다.
-      var userRoutines = await jsonMap[email]['routines'];
+      var userRoutines = await jsonMap['dmkthwan11@gmail.com']['routines'];
       routine = userRoutines;
       if (userRoutines != null) {
         // 데이터가 존재하면 변환하여 반환합니다.
@@ -66,7 +73,7 @@ class LandingSceneState extends State<LandingScene> {
       String jsonString = await rootBundle.loadString('assets/data/user_modified.json');
       Map<String, dynamic> jsonMap = json.decode(jsonString);
       // 'dmkthwan11@gmail.com' 사용자의 루틴 데이터를 가져옵니다.
-      var userHistory = jsonMap[email]['history'];
+      var userHistory = jsonMap['dmkthwan11@gmail.com']['history'];
       if (userHistory != null) {
         // 데이터가 존재하면 변환하여 반환합니다.
         return Map<String, dynamic>.from(userHistory);
@@ -100,33 +107,25 @@ class LandingSceneState extends State<LandingScene> {
       backgroundColor: ColorSet['gray'],
       appBar: PreferredSize(
         preferredSize: AppBar().preferredSize, // Use the same size as a regular AppBar
-        child: LayoutAppBar(key: layout, signIn: signIn, signOut: signOut, loggedIn: loggedIn, email: email, share: currentIndex),
+        child: LayoutAppBar(key: layout, signIn: signIn, signOut: signOut, loggedIn: loggedIn, email: email, share: currentIndex, onSharePressed: () => stat.currentState?.onShare()),
       ),
-      body: currentIndex < _children.length ? _children[currentIndex] : CircularProgressIndicator(),
-      bottomNavigationBar: LayoutBottomNavigationBar(currentIndex: currentIndex, onTap: _onTap),
+      body: currentIndex < _children.length ? _children[currentIndex] : const CircularProgressIndicator(),
+      bottomNavigationBar: LayoutBottomNavigationBar(key: bottomNavBarKey, currentIndex: currentIndex, onTap: _onTap),
     );
   }
 
   Future<void> signIn() async {
-    await GoogleSignInApi.logout();
-    final user = await GoogleSignInApi.login();
-    if (user != null) {
+    loggedIn = true;
+    email = 'dmkthwan11@gmail.com';
+    Future.wait([loadUserRoutine(), loadUserHistory()]).then((results) {
       setState(() {
-        loggedIn = true;
-        email = user.email;
-      });
-      Future.wait([loadUserRoutine(), loadUserHistory()]).then((results) {
-        print(results[1]);
-        setState(() {
-          _children = [
-            Timers(routine[routineIndex]),
-            TimerList(routines: results[0] as List<Map<String, dynamic>>, onTap: _onTap, changeRoutine: changeRoutine),
-            Statistics(history: results[1] as Map<String, dynamic>)
-          ];
-        });
-      });
+        _children = [
+          Timers(routine[routineIndex]),
+          TimerList(routines: results[0] as List<Map<String, dynamic>>, onTap: _onTap, changeRoutine: changeRoutine),
+          Statistics(key: stat, history: results[1] as Map<String, dynamic>)
+        ];
+      });});
     }
-  }
 
   void signOut() async {
     await GoogleSignInApi.logout();
@@ -134,9 +133,9 @@ class LandingSceneState extends State<LandingScene> {
       loggedIn = false;
       email = '';
       _children = [
-        Timers({}),
-        TimerList(routines: [], onTap: _onTap, changeRoutine: changeRoutine), // 비어있는 리스트 전달
-        Statistics(history: {})
+        const Timers({}),
+        TimerList(routines: const [], onTap: _onTap, changeRoutine: changeRoutine), // 비어있는 리스트 전달
+        Statistics(key: stat, history: const {})
       ];
     });
   }
