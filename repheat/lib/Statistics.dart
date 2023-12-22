@@ -57,7 +57,13 @@ class _TableCalendarScreenState extends State<TableCalendarScreen> {
     return (daysInView / 7).ceil();
   }
 
-
+  int? selectedBoxIndex;
+  void handleBoxTap(int index) {
+    setState(() {
+      // Toggle selection
+      selectedBoxIndex = selectedBoxIndex == index ? null : index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,19 +73,15 @@ class _TableCalendarScreenState extends State<TableCalendarScreen> {
     var log;
     if (_selectedDay != null) {
       log = widget.history[_selectedDay!.year.toString()]?[_selectedDay!.month.toString()]?[_selectedDay!.day.toString()];
-      // Ensure the log is a list before proceeding.
       if (log is! List) {
-        log = [];  // Default to an empty list if it's not a list.
+        log = [];
       }
-      // Rest of your code that depends on _selectedDay being not null...
     }
-    int? selectedBoxIndex;
+
     return Container(
         child: SingleChildScrollView(
-
           child: Column(
             mainAxisSize: MainAxisSize.min,
-
             children: [
               SizedBox(
                 width: 263,
@@ -236,20 +238,16 @@ class _TableCalendarScreenState extends State<TableCalendarScreen> {
                           children: List<Widget>.generate(log.length, (index) {
                             var routine = log[index];
                             var subroutines = routine['subroutines'] as List<dynamic>;
+
                             TimerListState util = TimerListState();
                             return Column(
                               children: [
                                 InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      selectedBoxIndex = selectedBoxIndex == index ? null : index;
-                                    });
-                                  },
-                                  child: (selectedBoxIndex != index)
-                                      ? util.bigBox(context, routine, false, index)
-                                      : util.bigBox(context, routine, true, index),
+                                  onTap: () => handleBoxTap(index),
+                                  child: util.bigBox(context, routine, false, index)
                                 ),
                                 if (selectedBoxIndex == index) ...subroutines.map((sub) {
+                                  // print('$selectedBoxIndex : $index');
                                   return util.littleBox(context, sub);
                                 }).toList(),
                               ],
