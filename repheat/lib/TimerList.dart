@@ -19,9 +19,27 @@ class TimerListState extends State<TimerList> {
   int? selectedBoxIndex;
 
   @override
+  void initState() {
+    super.initState();
+
+    // Set up a listener
+    AppTheme.onThemeChanged = () {
+      // Trigger a rebuild whenever the theme changes
+      setState(() {});
+    };
+  }
+
+  @override
+  void dispose() {
+    // Clean up the listener when the widget is removed from the tree
+    AppTheme.onThemeChanged = null;
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorSet['gray'],
+      backgroundColor: AppTheme.currentColorSet[1],
       body: SingleChildScrollView( // Wrap with SingleChildScrollView
         child: Container(
           alignment: Alignment.center,
@@ -53,7 +71,7 @@ class TimerListState extends State<TimerList> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
         child: Text('+', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w400)),
-        backgroundColor: ColorSet['white'],
+        backgroundColor: AppTheme.currentColorSet[2],
       ),
     );
   }
@@ -108,7 +126,7 @@ class TimerListState extends State<TimerList> {
         width: 299*fem,
         height: 100*fem,
         decoration: BoxDecoration (
-          color: ColorSet['black'],
+          color: AppTheme.currentColorSet[0],
           borderRadius: BorderRadius.circular(10*fem),
         ),
         child: Row(
@@ -121,7 +139,7 @@ class TimerListState extends State<TimerList> {
                   fontSize: fontSize*ffem,
                   fontWeight: FontWeight.w400,
                   height: 1.2125*ffem/fem,
-                  color: ColorSet['white']
+                  color: AppTheme.currentColorSet[2]
               ),
             ),
             Row(
@@ -134,7 +152,7 @@ class TimerListState extends State<TimerList> {
                         widget.onTap(0);
                         widget.changeRoutine(index);
                     },
-                    child: Icon(Icons.start)
+                    child: Text("START", style: TextStyle(fontStyle: FontStyle.italic),)
                 )
               ]
                   :[
@@ -148,7 +166,7 @@ class TimerListState extends State<TimerList> {
                           fontSize: 16*ffem,
                           fontWeight: FontWeight.w400,
                           height: 1.2125*ffem/fem,
-                          color: ColorSet['white']
+                          color: AppTheme.currentColorSet[2]
                       ),
                     ),
                     Text(
@@ -157,7 +175,7 @@ class TimerListState extends State<TimerList> {
                           fontSize: 16*ffem,
                           fontWeight: FontWeight.w400,
                           height: 1.2125*ffem/fem,
-                          color: ColorSet['white']
+                          color: AppTheme.currentColorSet[2]
                       ),
                     ),
                   ],
@@ -172,7 +190,7 @@ class TimerListState extends State<TimerList> {
                           fontSize: 16*ffem,
                           fontWeight: FontWeight.w400,
                           height: 1.2125*ffem/fem,
-                          color: ColorSet['white']
+                          color: AppTheme.currentColorSet[2]
                       ),
                     ),
                     Text(
@@ -181,7 +199,7 @@ class TimerListState extends State<TimerList> {
                           fontSize: 16*ffem,
                           fontWeight: FontWeight.w400,
                           height: 1.2125*ffem/fem,
-                          color: ColorSet['white']
+                          color: AppTheme.currentColorSet[2]
                       ),
                     ),
                   ],
@@ -205,7 +223,7 @@ class TimerListState extends State<TimerList> {
         width: 299*fem,
         height: 36*fem,
         decoration: BoxDecoration (
-          color: ColorSet['black'],
+          color: AppTheme.currentColorSet[0],
           borderRadius: BorderRadius.circular(10*fem),
         ),
         child: Row(
@@ -218,7 +236,7 @@ class TimerListState extends State<TimerList> {
                   fontSize: 16*ffem,
                   fontWeight: FontWeight.w400,
                   height: 1.2125*ffem/fem,
-                  color: ColorSet['white']
+                  color: AppTheme.currentColorSet[2]
               ),
             ),
             Text(
@@ -227,7 +245,7 @@ class TimerListState extends State<TimerList> {
                     fontSize: 16*ffem,
                     fontWeight: FontWeight.w400,
                     height: 1.2125*ffem/fem,
-                    color: ColorSet['white']
+                    color: AppTheme.currentColorSet[2]
                 )
             ),
           ],

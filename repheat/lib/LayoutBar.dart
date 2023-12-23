@@ -18,16 +18,18 @@ class LayoutAppBar extends StatefulWidget {
 
   final Future<Uint8List?> Function()? onCapture;
   final Future<void> Function(Uint8List image)? onSharePressed;
+  final Function(int) onJandiChanged;
 
-  LayoutAppBar({super.key, required this.signIn, required this.signOut, required this.loggedIn, required this.email, required this.share, this.onCapture, this.onSharePressed});
+  LayoutAppBar({super.key, required this.signIn, required this.signOut, required this.loggedIn, required this.email, required this.share, this.onCapture, this.onSharePressed, required this.onJandiChanged});
   @override
   LayoutAppBarState createState() => LayoutAppBarState();
 }
 
 class LayoutAppBarState extends State<LayoutAppBar> {
   Uint8List? _imageFile;
+  int jandi = 0;
+  int theme = 0;
 
-  // Function to capture, show dialog, and share
   void captureAndShare() async {
     if (widget.onCapture != null) {
       // Await the capture function if it's provided
@@ -43,18 +45,19 @@ class LayoutAppBarState extends State<LayoutAppBar> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5.0),
               side: BorderSide(
-                color: ColorSet['white']!,
+                color: AppTheme.currentColorSet[2]!,
                 width: 1.0,
               ),
             ),
-            backgroundColor: ColorSet['black'],
+            backgroundColor: AppTheme.currentColorSet[1],
             content: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min, // Use min size for the dialog
                 children: [
+                  Text('공유', style: TextStyle(color: AppTheme.currentColorSet[2], fontSize: 30)),
                   Image.memory(_imageFile!),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: ColorSet['white']),
+                    style: ElevatedButton.styleFrom(backgroundColor: AppTheme.currentColorSet[2]),
                     onPressed: () {
                       // Call share function if provided and image is available
                       if (widget.onSharePressed != null) {
@@ -62,7 +65,7 @@ class LayoutAppBarState extends State<LayoutAppBar> {
                         Navigator.pop(context);
                       }
                     },
-                    child: Text("Share", style: TextStyle(color: ColorSet['black'])),
+                    child: Text("Share", style: TextStyle(color: AppTheme.currentColorSet[0])),
                   ),
                 ],
               ),
@@ -71,6 +74,148 @@ class LayoutAppBarState extends State<LayoutAppBar> {
         },
       );
     }
+  }
+
+  void setting() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5.0),
+            side: BorderSide(
+              color: AppTheme.currentColorSet[2]!,
+              width: 1.0,
+            ),
+          ),
+          backgroundColor: AppTheme.currentColorSet[0],
+          content: Column(
+            mainAxisSize: MainAxisSize.min, // Use min size for the dialog
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 25.0),
+                child: Text('설정', style: TextStyle(color: AppTheme.currentColorSet[2], fontSize: 30)),
+              ),
+              Text('백업파일', style: TextStyle(color: AppTheme.currentColorSet[2], fontSize: 20)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(backgroundColor: AppTheme.currentColorSet[2]),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text("저장하기", style: TextStyle(color: AppTheme.currentColorSet[0])),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(backgroundColor: AppTheme.currentColorSet[2]),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text("불러오기", style: TextStyle(color: AppTheme.currentColorSet[0])),
+                    ),
+                  )
+                ],
+              ),
+
+              Text('테마', style: TextStyle(color: AppTheme.currentColorSet[2], fontSize: 20)),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('메인 테마', style: TextStyle(color: AppTheme.currentColorSet[2], fontSize: 20)),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        InkWell(
+                            onTap: (){
+                              AppTheme.changeTheme(0); // Change to the second theme
+                              setState(() {
+                              });
+                            },
+                            child: ColorList(false, 0)
+                        ),
+                        InkWell(
+                            onTap: (){
+                              AppTheme.changeTheme(1);// Change to the second theme
+                              setState(() {
+                              });
+                            },
+                            child: ColorList(false, 1)
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('달력 잔디', style: TextStyle(color: AppTheme.currentColorSet[2], fontSize: 20)),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      InkWell(
+                          onTap: (){
+                            setState(() {
+                              jandi = 0;
+                            });
+                            widget.onJandiChanged(jandi);
+                          },
+                          child: ColorList(false, 0)
+                      ),
+                      InkWell(
+                          onTap: (){
+                            setState(() {
+                              jandi = 1;
+                            });
+                            widget.onJandiChanged(jandi);
+                          },
+                          child: ColorList(false, 1)
+                      ),
+                      InkWell(
+                          onTap: (){
+                            setState(() {
+                              jandi = 2;
+                            });
+                            widget.onJandiChanged(jandi);
+                          },
+                          child: ColorList(false, 2)
+                      )
+                    ],
+                  )
+                ],
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Set up a listener
+    AppTheme.onThemeChanged = () {
+      // Trigger a rebuild whenever the theme changes
+      setState(() {});
+    };
+  }
+
+  @override
+  void dispose() {
+    // Clean up the listener when the widget is removed from the tree
+    AppTheme.onThemeChanged = null;
+    super.dispose();
   }
 
   @override
@@ -91,23 +236,23 @@ class LayoutAppBarState extends State<LayoutAppBar> {
             },
             icon: Icon(
               widget.loggedIn ? Icons.logout : Icons.login,
-              color: ColorSet['white'],
+              color: colorSet[0][2],
             ),
           ),
-          Text(widget.email, style: TextStyle(color: ColorSet['white'], fontSize: 13*ffem),),
+          Text(widget.email, style: TextStyle(color: colorSet[0][2], fontSize: 13*ffem),),
           const Spacer(),
           if(widget.share == 2)
             IconButton(
               onPressed: captureAndShare,
-              icon: Icon(Icons.share, color: ColorSet['white']),
+              icon: Icon(Icons.share, color: colorSet[0][2]),
             ),
           IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.settings, color: ColorSet['white']),
+            onPressed: setting,
+            icon: Icon(Icons.settings, color: colorSet[0][2]),
           ),
         ],
       ),
-      backgroundColor: ColorSet['gray'],
+      backgroundColor: AppTheme.currentColorSet[1],
       elevation: 0.0,
     );
   }
@@ -137,8 +282,8 @@ class LayoutBottomNavigationBarState extends State<LayoutBottomNavigationBar> {
 
   @override
   Widget build(BuildContext context) {
-    List<dynamic> iconColors = [ColorSet['gray'], ColorSet['gray'], ColorSet['gray']];
-    iconColors[widget.currentIndex] = ColorSet['white'];
+    List<dynamic> iconColors = [AppTheme.currentColorSet[1], AppTheme.currentColorSet[1], AppTheme.currentColorSet[1]];
+    iconColors[widget.currentIndex] = AppTheme.currentColorSet[2];
     return isVisible ? BottomNavigationBar(
       currentIndex: widget.currentIndex,
       onTap: widget.onTap,
@@ -147,7 +292,7 @@ class LayoutBottomNavigationBarState extends State<LayoutBottomNavigationBar> {
         BottomNavigationBarItem(icon: Icon(Icons.storage_outlined, color: iconColors[1]), label: ''),
         BottomNavigationBarItem(icon: Icon(Icons.show_chart_outlined, color: iconColors[2],), label: '')
       ],
-      backgroundColor: ColorSet['black'],
+      backgroundColor: AppTheme.currentColorSet[0],
     ): SizedBox.shrink();
   }
 

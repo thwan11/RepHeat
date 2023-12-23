@@ -30,7 +30,7 @@ class PieChart extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     nexttime = nextsub['hour'] * 3600 + nextsub['minute'] * 60 + nextsub['second'];
     Paint paint = Paint()
-        ..color = ColorSet['gray']!
+        ..color = AppTheme.currentColorSet[1]!
         ..strokeWidth = 10.0
         ..style = PaintingStyle.stroke
         ..strokeCap = StrokeCap.round;
@@ -39,7 +39,7 @@ class PieChart extends CustomPainter {
     double radius = min(size.width / 2 - paint.strokeWidth / 2 , size.height / 2 - paint.strokeWidth/2);
     Offset center = Offset(size.width / 2, size.height/ 2);
     Paint blackCirclePaint = Paint()
-      ..color = ColorSet['black']!
+      ..color = AppTheme.currentColorSet[0]!
       ..style = PaintingStyle.fill; // 채우기 스타일
 
     // 검은색 원의 반지름은 기존 원의 반지름보다 작게 설정
@@ -55,11 +55,11 @@ class PieChart extends CustomPainter {
   void drawArc(Paint paint, Canvas canvas, Offset center, double radius) {
     if(percentage == 0){
       double arcAngle = 2 * pi * (0.01 / 100);
-      paint..color = ColorSet['white']!;
+      paint..color = AppTheme.currentColorSet[2]!;
       canvas.drawArc(Rect.fromCircle(center: center, radius: radius), -pi / 2, arcAngle, false, paint);
     }else{
       double arcAngle = 2 * pi * (percentage / 100);
-      paint..color = ColorSet['white']!;
+      paint..color = AppTheme.currentColorSet[2]!;
       canvas.drawArc(Rect.fromCircle(center: center, radius: radius), -pi / 2, arcAngle, false, paint);
     }
 
@@ -68,7 +68,7 @@ class PieChart extends CustomPainter {
   void drawText(Canvas canvas, Size size, int text) {
     double fontSize = getFontSize(size, formatTime(text));
 
-    TextSpan sp = TextSpan(style: TextStyle(fontSize: fontSize+10, fontWeight: FontWeight.bold, color: ColorSet['white'], fontStyle: FontStyle.italic), text:  formatTime(text));
+    TextSpan sp = TextSpan(style: TextStyle(fontSize: fontSize+10, fontWeight: FontWeight.bold, color: AppTheme.currentColorSet[2], fontStyle: FontStyle.italic), text:  formatTime(text));
     TextPainter tp = TextPainter(text: sp, textDirection: TextDirection.ltr);
 
     tp.layout();
@@ -79,7 +79,7 @@ class PieChart extends CustomPainter {
     tp.paint(canvas, offset);
 //==========================================================================================
 
-    TextSpan sp1 = TextSpan(style: TextStyle(fontSize: 25, color: ColorSet['white'], fontStyle: FontStyle.italic), text: nowiter.toString() + '/' + iter.toString());
+    TextSpan sp1 = TextSpan(style: TextStyle(fontSize: 25, color: AppTheme.currentColorSet[2], fontStyle: FontStyle.italic), text: nowiter.toString() + '/' + iter.toString());
     TextPainter tp1 = TextPainter(text: sp1, textDirection: TextDirection.ltr);
 
     tp1.layout();
@@ -90,7 +90,7 @@ class PieChart extends CustomPainter {
     tp1.paint(canvas, offset1);
 //==========================================================================================
 
-    TextSpan sp2 = TextSpan(style: TextStyle(fontSize: 25, color: ColorSet['gray'], fontStyle: FontStyle.italic), text: formatTime(nexttime));
+    TextSpan sp2 = TextSpan(style: TextStyle(fontSize: 25, color: AppTheme.currentColorSet[1], fontStyle: FontStyle.italic), text: formatTime(nexttime));
     TextPainter tp2 = TextPainter(text: sp2, textDirection: TextDirection.ltr);
 
     tp2.layout();

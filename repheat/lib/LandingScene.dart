@@ -33,18 +33,42 @@ class LandingSceneState extends State<LandingScene> {
 
   late List<dynamic> routine;
 
+  int jandi = 0; // Default value
+
+  void handleJandiChange(int newJandi) {
+
+    Future.wait([loadUserRoutine(), loadUserHistory()]).then((results){
+      setState(() {
+        jandi = newJandi;
+        // Rebuild the Statistics widget with the new jandi value
+        _children[2] = Statistics(key: stat, history: results[1] as Map<String, dynamic>, jandi: jandi);
+      });
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    AppTheme.onThemeChanged = () {
+      // Trigger a rebuild whenever the theme changes
+      setState(() {});
+    };
     Future.wait([loadUserRoutine(), loadUserHistory()]).then((results) {
       setState(() {
         _children = [
-          const Timers({}),
+          Timers({}),
           TimerList(routines: results[0] as List<Map<String, dynamic>>, onTap: _onTap, changeRoutine: changeRoutine), // 첫 번째 결과 사용
-          Statistics(key: stat, history: results[1] as Map<String, dynamic>) // 두 번째 결과 사용
+          Statistics(key: stat, history: results[1] as Map<String, dynamic>, jandi: layout.currentState!.jandi) // 두 번째 결과 사용
         ];
       });
     });
+  }
+
+  @override
+  void dispose() {
+    // Clean up the listener when the widget is removed from the tree
+    AppTheme.onThemeChanged = null;
+    super.dispose();
   }
 
   Future<List<Map<String, dynamic>>> loadUserRoutine() async {
@@ -96,18 +120,21 @@ class LandingSceneState extends State<LandingScene> {
   void changeRoutine(int index) {
     routineIndex = index;
 
-    setState(() {
-    });
+    setState(() {});
     print(routineIndex);
+    setState(() {
+      _children = [Timers(routine[routineIndex], key: timerkey,), _children[1],_children[2]];
+    });
+    timerkey.currentState?.sets(routine[routineIndex]);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorSet['gray'],
+      backgroundColor: AppTheme.currentColorSet[0],
       appBar: PreferredSize(
         preferredSize: AppBar().preferredSize, // Use the same size as a regular AppBar
-        child: LayoutAppBar(key: layout, signIn: signIn, signOut: signOut, loggedIn: loggedIn, email: email, share: currentIndex, onCapture: stat.currentState?.captureImage, onSharePressed: stat.currentState?.onShare),
+        child: LayoutAppBar(key: layout, signIn: signIn, signOut: signOut, loggedIn: loggedIn, email: email, share: currentIndex, onCapture: stat.currentState?.captureImage, onSharePressed: stat.currentState?.onShare, onJandiChanged: handleJandiChange),
       ),
       body: currentIndex < _children.length ? _children[currentIndex] : const CircularProgressIndicator(),
       bottomNavigationBar: LayoutBottomNavigationBar(key: bottomNavBarKey, currentIndex: currentIndex, onTap: _onTap),
@@ -120,9 +147,9 @@ class LandingSceneState extends State<LandingScene> {
     Future.wait([loadUserRoutine(), loadUserHistory()]).then((results) {
       setState(() {
         _children = [
-          Timers(routine[routineIndex]),
+          Timers(routine[routineIndex], key: timerkey,),
           TimerList(routines: results[0] as List<Map<String, dynamic>>, onTap: _onTap, changeRoutine: changeRoutine),
-          Statistics(key: stat, history: results[1] as Map<String, dynamic>)
+          Statistics(key: stat, history: results[1] as Map<String, dynamic>, jandi: layout.currentState!.jandi)
         ];
       });});
     }
@@ -133,9 +160,9 @@ class LandingSceneState extends State<LandingScene> {
       loggedIn = false;
       email = '';
       _children = [
-        const Timers({}),
+        Timers({}),
         TimerList(routines: const [], onTap: _onTap, changeRoutine: changeRoutine), // 비어있는 리스트 전달
-        Statistics(key: stat, history: const {})
+        Statistics(key: stat, history: const {}, jandi: layout.currentState!.jandi)
       ];
     });
   }

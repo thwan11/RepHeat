@@ -5,12 +5,12 @@ class Timer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorSet['gray'],
+      backgroundColor: AppTheme.currentColorSet[1],
       body: _greetingWidget,
     );
   }
 
   Widget get _greetingWidget {
-    return Text("Timer", style: TextStyle(color: ColorSet['white']),);
+    return Text("Timer", style: TextStyle(color: AppTheme.currentColorSet[2]),);
   }
 }

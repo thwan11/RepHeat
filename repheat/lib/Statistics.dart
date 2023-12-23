@@ -15,7 +15,9 @@ import 'TimerList.dart';
 class Statistics extends StatefulWidget {
 
   Map<String, dynamic> history;
-  Statistics({super.key, required this.history});
+  int jandi;
+
+  Statistics({super.key, required this.history, required this.jandi});
 
   @override
   State<Statistics> createState() => StatisticsState();
@@ -25,6 +27,24 @@ class StatisticsState extends State<Statistics> {
   GlobalKey repaintBoundaryKey = GlobalKey();
 
   ScreenshotController screenshotController = ScreenshotController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Set up a listener
+    AppTheme.onThemeChanged = () {
+      // Trigger a rebuild whenever the theme changes
+      setState(() {});
+    };
+  }
+
+  @override
+  void dispose() {
+    // Clean up the listener when the widget is removed from the tree
+    AppTheme.onThemeChanged = null;
+    super.dispose();
+  }
 
   Future<Uint8List> captureImage() async {
     RenderRepaintBoundary boundary = repaintBoundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
@@ -59,14 +79,14 @@ class StatisticsState extends State<Statistics> {
     return Screenshot(
       controller: screenshotController,
       child: Scaffold(
-        backgroundColor: ColorSet['gray'],
+        backgroundColor: AppTheme.currentColorSet[1],
         body: SingleChildScrollView(
           child: RepaintBoundary(
             key: repaintBoundaryKey,
             child: Container(
-                color: ColorSet['gray'],
+                color: AppTheme.currentColorSet[1],
                 alignment: Alignment.topCenter,
-                child: TableCalendarScreen(history: widget.history)
+                child: TableCalendarScreen(history: widget.history, jandi: widget.jandi)
             ),
           ),
         ),
@@ -75,13 +95,15 @@ class StatisticsState extends State<Statistics> {
   }
 
   Widget get _greetingWidget {
-    return Text("Statistics", style: TextStyle(color: ColorSet['white']),);
+    return Text("Statistics", style: TextStyle(color: AppTheme.currentColorSet[2]),);
   }
 }
 
 class TableCalendarScreen extends StatefulWidget {
   Map<String, dynamic> history;
-  TableCalendarScreen({Key? key, required this.history}) : super(key: key);
+  int jandi;
+
+  TableCalendarScreen({Key? key, required this.history, required this.jandi}) : super(key: key);
 
   @override
   State<TableCalendarScreen> createState() => _TableCalendarScreenState();
@@ -107,6 +129,24 @@ class _TableCalendarScreenState extends State<TableCalendarScreen> {
       // Toggle selection
       selectedBoxIndex = selectedBoxIndex == index ? null : index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Set up a listener
+    AppTheme.onThemeChanged = () {
+      // Trigger a rebuild whenever the theme changes
+      setState(() {});
+    };
+  }
+
+  @override
+  void dispose() {
+    // Clean up the listener when the widget is removed from the tree
+    AppTheme.onThemeChanged = null;
+    super.dispose();
   }
 
   @override
@@ -168,7 +208,7 @@ class _TableCalendarScreenState extends State<TableCalendarScreen> {
                       formatButtonVisible: false,
                       titleTextStyle: TextStyle(
                         fontSize: 30.0,
-                        color: ColorSet['white'],
+                        color: AppTheme.currentColorSet[2],
                       ),
                       leftChevronIcon: Center(
                         child: Container(
@@ -176,10 +216,10 @@ class _TableCalendarScreenState extends State<TableCalendarScreen> {
                           height: 20,
                           alignment: Alignment.center, // This centers the icon within the container
                           decoration: BoxDecoration(
-                            color: ColorSet['black'],
+                            color: AppTheme.currentColorSet[0],
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          child: Icon(Icons.chevron_left, color: ColorSet['white'], size: 15,),
+                          child: Icon(Icons.chevron_left, color: AppTheme.currentColorSet[2], size: 15,),
                         ),
                       ),
                       leftChevronPadding: EdgeInsets.all(0),
@@ -189,10 +229,10 @@ class _TableCalendarScreenState extends State<TableCalendarScreen> {
                           height: 20,
                           alignment: Alignment.center, // This centers the icon within the container
                           decoration: BoxDecoration(
-                            color: ColorSet['black'],
+                            color: AppTheme.currentColorSet[0],
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          child: Icon(Icons.chevron_right, color: ColorSet['white'], size: 15,),
+                          child: Icon(Icons.chevron_right, color: AppTheme.currentColorSet[2], size: 15,),
                         ),
                       ),
                       rightChevronPadding: EdgeInsets.all(0)
@@ -201,75 +241,8 @@ class _TableCalendarScreenState extends State<TableCalendarScreen> {
               ),
 
               Padding(
-                padding: const EdgeInsets.fromLTRB(100, 2.0, 0, 2.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: Text('Less', style: TextStyle(color: ColorSet['white'], fontSize: 12),),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: Container(
-                        width: 15,
-                        height: 15,
-                        decoration: BoxDecoration(
-                          color: Gradient1['0'],
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: Container(
-                        width: 15,
-                        height: 15,
-                        decoration: BoxDecoration(
-                          color: Gradient1['1'],
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: Container(
-                        width: 15,
-                        height: 15,
-                        decoration: BoxDecoration(
-                          color: Gradient1['2'],
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: Container(
-                        width: 15,
-                        height: 15,
-                        decoration: BoxDecoration(
-                          color: Gradient1['3'],
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: Container(
-                        width: 15,
-                        height: 15,
-                        decoration: BoxDecoration(
-                          color: Gradient1['4'],
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: Text('More', style: TextStyle(color: ColorSet['white'], fontSize: 12),),
-                    ),
-                  ],
-                ),
+                padding: const EdgeInsets.only(left: 100),
+                child: ColorList(true, widget.jandi),
               ),
 
               if (_selectedDay != null)
@@ -327,7 +300,7 @@ class _TableCalendarScreenState extends State<TableCalendarScreen> {
     int userActivity = log.length;
 
     Border? border = (isToday) ? Border.all(
-        color: ColorSet['white']!,
+        color: AppTheme.currentColorSet[2]!,
         width: 2
     ) : null;
 
@@ -336,14 +309,14 @@ class _TableCalendarScreenState extends State<TableCalendarScreen> {
     if (userActivity != null && userActivity > 0) {
       // Example: different color intensity based on activity level
       boxDecoration = BoxDecoration(
-        color: Gradient1[(userActivity < 4) ? userActivity.toString() : '4'],
+        color: gradient[widget.jandi][(userActivity < 4) ? userActivity : 4],
         borderRadius: BorderRadius.circular(5),
         border: border,
       );
     } else {
       // Default style for days with no activity
       boxDecoration = BoxDecoration(
-        color: Gradient1['0'],
+        color: gradient[widget.jandi][0],
         borderRadius: BorderRadius.circular(5),
         border: border,
       );
@@ -358,7 +331,7 @@ class _TableCalendarScreenState extends State<TableCalendarScreen> {
         padding: EdgeInsets.fromLTRB(4.5,3,0,0),
         child: Text(
           dayOfMonth,
-          style: TextStyle(color: ColorSet['white'], fontSize: 10),
+          style: TextStyle(color: AppTheme.currentColorSet[2], fontSize: 10),
         ),
       ),
     );

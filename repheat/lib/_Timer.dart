@@ -11,14 +11,25 @@ import 'global.dart';
 
 
 class Timers extends StatefulWidget {
-  final Map<String, dynamic> config; //routine을 받아옵니다.
-  const Timers(this.config, {super.key});
+  Map<String, dynamic> config; //routine을 받아옵니다.
+  Timers(this.config, {super.key});
 
   @override
   TimerState createState() => TimerState();
 }
 
 class TimerState extends State<Timers> {
+
+  void sets(Map<String, dynamic> routine){
+    setState(() {
+      print(1);
+      widget.config = routine;
+      initState();
+
+    });
+  }
+
+
   String? name;
   late List<dynamic> subroutines;
   String? subname;
@@ -38,6 +49,10 @@ class TimerState extends State<Timers> {
   @override
   void initState() {
     super.initState();
+    AppTheme.onThemeChanged = () {
+      // Trigger a rebuild whenever the theme changes
+      setState(() {});
+    };
 
     name = widget.config['name'] ?? 'bug occured';
     subroutines = widget.config['subroutines'];
@@ -50,6 +65,7 @@ class TimerState extends State<Timers> {
     t60 = time[0]*3600 + time[1]*60 + time[2];
     t60now = 0;
   }
+
 
   void nextsub(){
     setState(() {
@@ -132,7 +148,7 @@ class TimerState extends State<Timers> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: ColorSet['gray'],
+        backgroundColor: AppTheme.currentColorSet[1],
         body: Container(
           alignment: Alignment.center,
           child: Column(
@@ -140,11 +156,11 @@ class TimerState extends State<Timers> {
             children: <Widget>[
               Container(
                 padding: const EdgeInsets.fromLTRB(3, 10, 3, 3),
-                child: Text(name!, style: TextStyle(color: ColorSet['white'], fontWeight: FontWeight.bold, fontSize: 32 ),),
+                child: Text(name!, style: TextStyle(color: colorSet[0][2], fontWeight: FontWeight.bold, fontSize: 32 ),),
               ),
               Container(
                 padding: const EdgeInsets.fromLTRB(3, 2, 3, 30),
-                child: Text('<${subname!}>', style: TextStyle(color: ColorSet['white'], fontWeight: FontWeight.bold ,fontSize: 20)),
+                child: Text('<${subname!}>', style: TextStyle(color: colorSet[0][2], fontWeight: FontWeight.bold ,fontSize: 20)),
               ),
               Container(
                 child: CustomPaint( // CustomPaint를 그리고 이 안에 차트를 그려줍니다..
@@ -196,13 +212,13 @@ class TimerState extends State<Timers> {
       return ElevatedButton(
         onPressed: startTimer,
         style: ElevatedButton.styleFrom(
-            backgroundColor: ColorSet['black'],
+            backgroundColor: AppTheme.currentColorSet[0],
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30.0)
             ),
             fixedSize: const Size(100,10)
         ),
-        child: Icon(Icons.play_arrow_outlined, color: ColorSet['white'], size: 30,),
+        child: Icon(Icons.play_arrow_outlined, color: AppTheme.currentColorSet[2], size: 30,),
       );
     } else {
       return Container(
@@ -213,23 +229,23 @@ class TimerState extends State<Timers> {
             ElevatedButton(
               onPressed: resetTimer,
               style: ElevatedButton.styleFrom(
-                backgroundColor: ColorSet['black'],
+                backgroundColor: AppTheme.currentColorSet[0],
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0)
                 ),
               ),
-              child: Icon(Icons.stop_outlined, color: ColorSet['white'],),
+              child: Icon(Icons.stop_outlined, color: AppTheme.currentColorSet[2],),
             ),
             ElevatedButton(
               onPressed: pauseTimer,
               style: ElevatedButton.styleFrom(
-                  backgroundColor: ColorSet['black'],
+                  backgroundColor: AppTheme.currentColorSet[0],
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0)
                   ),
                   fixedSize: const Size(100,10)
               ),
-              child: Icon(Icons.pause_outlined, color: ColorSet['white'],),
+              child: Icon(Icons.pause_outlined, color: AppTheme.currentColorSet[2],),
             ),
 
           ],
@@ -240,6 +256,8 @@ class TimerState extends State<Timers> {
 
   @override
   void dispose() {
+
+    AppTheme.onThemeChanged = null;
     timer.cancel();
       super.dispose();
   }
