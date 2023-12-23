@@ -2,10 +2,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'ColorScheme.dart';
 import 'pie_chart.dart';
+import 'LayoutBar.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'dart:convert';
+import 'global.dart';
+
+
 
 class Timers extends StatefulWidget {
   final Map<String, dynamic> config; //routine을 받아옵니다.
-  Timers(this.config);
+  const Timers(this.config, {super.key});
 
   @override
   TimerState createState() => TimerState();
@@ -52,6 +59,7 @@ class TimerState extends State<Timers> {
         nowiter = nowiter+1;
         if(nowiter > iter){
           resetTimer();
+          saveRoutineHistory();
         }else{
           subname = subroutines[subroutineindex]['name'];
           time = [subroutines[subroutineindex]['hour'], subroutines[subroutineindex]['minute'], subroutines[subroutineindex]['second']];
@@ -68,10 +76,12 @@ class TimerState extends State<Timers> {
   }
 
   void startTimer() {
-    timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
+    timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
       onTick(timer);
     });
     setState(() {
+      //Todo 여기에 네비게이션 바 끄는 코드 필요
+      bottomNavBarKey.currentState?.toggleVisibility();
       running = true;
     });
   }
@@ -80,12 +90,18 @@ class TimerState extends State<Timers> {
     timer.cancel();
     setState(() {
       running = false;
+      //Todo 여기에 네비게이션 바 켜는 코드 필요
+      bottomNavBarKey.currentState?.toggleVisibility();
+
     });
   }
 
   void resetTimer() {
     timer.cancel();
     setState(() {
+      //Todo 여기에 네비게이션 바 켜는 코드 필요
+      bottomNavBarKey.currentState?.toggleVisibility();
+
       running = false;
       name = widget.config['name'] ?? 'bug occured';
       subroutines = widget.config['subroutines'];
@@ -123,16 +139,16 @@ class TimerState extends State<Timers> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Container(
+                padding: const EdgeInsets.fromLTRB(3, 10, 3, 3),
                 child: Text(name!, style: TextStyle(color: ColorSet['white'], fontWeight: FontWeight.bold, fontSize: 32 ),),
-                padding: EdgeInsets.fromLTRB(3, 10, 3, 3),
               ),
               Container(
-                child: Text('<'+subname!+'>', style: TextStyle(color: ColorSet['white'], fontWeight: FontWeight.bold ,fontSize: 20)),
-                padding: EdgeInsets.fromLTRB(3, 2, 3, 30),
+                padding: const EdgeInsets.fromLTRB(3, 2, 3, 30),
+                child: Text('<${subname!}>', style: TextStyle(color: ColorSet['white'], fontWeight: FontWeight.bold ,fontSize: 20)),
               ),
               Container(
                 child: CustomPaint( // CustomPaint를 그리고 이 안에 차트를 그려줍니다..
-                  size: Size(300, 300), // CustomPaint의 크기는 가로 세로 150, 150으로 합니다.
+                  size: const Size(300, 300), // CustomPaint의 크기는 가로 세로 150, 150으로 합니다.
                   painter: PieChart(
                       time: t60,
                       timenow: t60now,
@@ -152,46 +168,68 @@ class TimerState extends State<Timers> {
         )
     );
   }
+  void saveRoutineHistory() async {
+    final DateTime now = DateTime.now(); // 현재 날짜와 시간을 가져옵니다.
+    final String formattedDate = "${now.year}-${now.month}-${now.day}"; // 날짜 형식화
+
+    final Map<String, dynamic> historyData = {
+      'date': formattedDate,
+      'routine': widget.config,
+    };
+
+    final directory = await getApplicationDocumentsDirectory(); // 앱 문서 디렉토리 경로를 가져옵니다.
+    final file = File('${directory.path}/routine_history.json'); // 파일 경로 설정
+
+    List<dynamic> historyList = [];
+    if (await file.exists()) {
+      // 파일이 존재하는 경우, 기존 내용을 불러옵니다.
+      String contents = await file.readAsString();
+      historyList = json.decode(contents);
+    }
+
+    historyList.add(historyData); // 새로운 기록을 추가합니다.
+    await file.writeAsString(json.encode(historyList)); // 파일에 데이터를 저장합니다.
+  }
 
   Widget _BottomButton() {
     if (!running) {
       return ElevatedButton(
         onPressed: startTimer,
-        child: Icon(Icons.play_arrow_outlined, color: ColorSet['white'], size: 30,),
         style: ElevatedButton.styleFrom(
             backgroundColor: ColorSet['black'],
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30.0)
             ),
-            fixedSize: Size(100,10)
+            fixedSize: const Size(100,10)
         ),
+        child: Icon(Icons.play_arrow_outlined, color: ColorSet['white'], size: 30,),
       );
     } else {
       return Container(
-        padding: EdgeInsets.fromLTRB(145, 5, 30, 0),
+        padding: const EdgeInsets.fromLTRB(83, 0, 30, 0),
         alignment: Alignment.center,
         child: Row(
           children: <Widget>[
             ElevatedButton(
               onPressed: resetTimer,
-              child: Icon(Icons.stop_outlined, color: ColorSet['white'],),
               style: ElevatedButton.styleFrom(
                 backgroundColor: ColorSet['black'],
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0)
                 ),
               ),
+              child: Icon(Icons.stop_outlined, color: ColorSet['white'],),
             ),
             ElevatedButton(
               onPressed: pauseTimer,
-              child: Icon(Icons.pause_outlined, color: ColorSet['white'],),
               style: ElevatedButton.styleFrom(
                   backgroundColor: ColorSet['black'],
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0)
                   ),
-                  fixedSize: Size(100,10)
+                  fixedSize: const Size(100,10)
               ),
+              child: Icon(Icons.pause_outlined, color: ColorSet['white'],),
             ),
 
           ],
@@ -202,9 +240,7 @@ class TimerState extends State<Timers> {
 
   @override
   void dispose() {
-    if (timer != null) {
-      timer.cancel();
-    }
-    super.dispose();
+    timer.cancel();
+      super.dispose();
   }
 }
