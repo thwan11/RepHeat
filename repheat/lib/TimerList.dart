@@ -69,10 +69,6 @@ class TimerListState extends State<TimerList> {
 
   final TextEditingController titleController = TextEditingController();
   final TextEditingController contentController = TextEditingController();
-  final TextEditingController inputsubhour = TextEditingController();
-  final TextEditingController inputsubminute = TextEditingController();
-  final TextEditingController inputsubsecond = TextEditingController();
-  final TextEditingController inputsubname = TextEditingController();
 
   Future<void> addTimerEvent(BuildContext context) {
     return showDialog(
@@ -223,68 +219,6 @@ class TimerListState extends State<TimerList> {
                         ),
                       ],
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text('subroutine',
-                        style: TextStyle(
-                          color: ColorSet['white'],
-                        ),
-                        ),
-                        TextField(//루틴 이름 입력
-                          onChanged: (value) {
-                            subroutines[index].subname = value;
-                          },
-
-                          maxLength: 2,
-                        ),
-                        TextField(//루틴 이름 입력
-                          style: TextStyle(
-                              fontSize: 30,
-                              color: ColorSet['white']
-                          ),
-                          controller: inputsubminute,
-                          maxLength: 2,
-                        ),
-                        TextField(//루틴 이름 입력
-                          style: TextStyle(
-                              fontSize: 30,
-                              color: ColorSet['white']
-                          ),
-                          controller: inputsubsecond,
-                          maxLength: 2,
-                        ),
-                        TextField(//루틴 이름 입력
-                          style: TextStyle(
-                              fontSize: 30,
-                              color: ColorSet['white']
-                          ),
-                          controller: inputsubname,
-                          maxLength: 8,
-                        ),
-                        SizedBox(
-                          width: 20,
-                          height: 15,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              _addSubroutine();
-                            },
-                            child: Align(
-                              alignment: Alignment.topLeft,
-                              child: Text('+',
-                                textAlign: TextAlign.left,
-                                style: (
-                                    TextStyle(
-                                        fontSize: 5,
-                                        color: ColorSet['black']
-                                    )
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
                     Expanded(
                       child: ListView.builder(
                         itemCount: subroutines.length,
@@ -299,7 +233,14 @@ class TimerListState extends State<TimerList> {
                         },
                       ),
                     ),
-
+                    // + 버튼
+                    ElevatedButton(
+                      onPressed: () {
+                        // + 버튼 눌렀을 때, 새로운 타이머 추가
+                        _addSubroutine();
+                      },
+                      child: Text('Add Subroutiner'),
+                    ),
                   ],
                 );
               }
@@ -335,6 +276,12 @@ class TimerListState extends State<TimerList> {
     );
   }
 
+  void _addSubroutine() {
+    subroutines.add(_subRoutine(subname: 'New Timer', subh: 0, submin: 0, subsec: 0));
+    setState(() {});
+  }
+
+
   // 타이머 편집 다이얼로그 표시
   void _showEditDialog(int index) {
     showDialog(
@@ -354,19 +301,19 @@ class TimerListState extends State<TimerList> {
               // 시간 입력 필드
               TextField(
                 onChanged: (value) {
-                  timers[index].hours = int.tryParse(value) ?? 0;
+                  subroutines[index].hours = int.tryParse(value) ?? 0;
                 },
                 decoration: InputDecoration(labelText: 'Hours'),
               ),
               TextField(
                 onChanged: (value) {
-                  timers[index].minutes = int.tryParse(value) ?? 0;
+                  subroutines[index].minutes = int.tryParse(value) ?? 0;
                 },
                 decoration: InputDecoration(labelText: 'Minutes'),
               ),
               TextField(
                 onChanged: (value) {
-                  timers[index].seconds = int.tryParse(value) ?? 0;
+                  subroutines[index].seconds = int.tryParse(value) ?? 0;
                 },
                 decoration: InputDecoration(labelText: 'Seconds'),
               ),
@@ -392,11 +339,6 @@ class TimerListState extends State<TimerList> {
     );
   }
 }
-
-
-void _addSubroutine() {
-    subroutines.add(_subRoutine(subname: inputsubname, subh: inputsubhour, submin: inputsubminute, subsec: inputsubsecond);
-  }
 
   String timeToString(int time) {
     int hour = 0;
@@ -575,4 +517,3 @@ void _addSubroutine() {
       ),
     );
   }
-}
