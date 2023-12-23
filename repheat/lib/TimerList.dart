@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'ColorScheme.dart';
 import 'LandingScene.dart';
 import '_Timer.dart';
@@ -17,6 +21,7 @@ class TimerList extends StatefulWidget {
 class TimerListState extends State<TimerList> {
   final GlobalKey<TimerState> timer = GlobalKey();
   int? selectedBoxIndex;
+
 
   @override
   void initState() {
@@ -69,10 +74,175 @@ class TimerListState extends State<TimerList> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () => addTimerEvent(context),
         child: Text('+', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w400)),
         backgroundColor: AppTheme.currentColorSet[2],
       ),
+    );
+  }
+
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController contentController = TextEditingController();
+  int setiter = 1;
+  bool _isSound = false;
+  bool _isVibrate = false;
+
+  Future<void> addTimerEvent(BuildContext context) {
+    return showDialog(
+      context: context,
+      barrierDismissible: true, //바깥 영역 터치 시 닫을지 여부, 현재 true
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5.0),
+            side: BorderSide(
+              color: Colors.grey,
+              width: 1.0,
+            ),
+          ),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  TextField(
+                    style: TextStyle(
+                        fontSize: 30,
+                        color: AppTheme.currentColorSet[2]
+                    ),
+                    controller: titleController,
+                    maxLength: 8,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      counterText: '', //count 안보이게 하면 8자 넘어서까지 입력되다가
+                      // 그 이상 입력한건 사라지더라, count 있는게 나을듯?
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            'x$setiter',
+                            style: (
+                                TextStyle(
+                                    fontSize: 30,
+                                    color: AppTheme.currentColorSet[2]
+                                )
+                            ),
+                          ),
+                          Column(
+                            children: [
+                              SizedBox(
+                                width: 20,
+                                height: 15,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    if (setiter < 98) {
+                                      setState(() {
+                                        setiter = setiter + 1;
+                                      });
+                                    };
+                                  },
+                                  child: Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Text('↑',
+                                      textAlign: TextAlign.left,
+                                      style: (
+                                          TextStyle(
+                                              fontSize: 5,
+                                              color: AppTheme.currentColorSet[0]
+                                          )),
+
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              SizedBox(
+                                width: 20,
+                                height: 15,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    if (setiter > 1) {
+                                      setState(() {
+                                        setiter--;
+                                      });
+                                    };
+                                  },
+                                  child: Text('↓',
+                                    textAlign: TextAlign.center,
+                                    style: (
+                                        TextStyle(
+                                            fontSize: 10,
+                                            color: AppTheme.currentColorSet[0]
+                                        )
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Switch(
+                              value: _isSound,
+                              onChanged: (value) {
+                                setState(() {
+                                  _isSound = value;
+                                });
+                              }
+                          ),
+                          Switch(
+                              value: _isVibrate,
+                              onChanged: (value) {
+                                setState(() {
+                                  _isVibrate = value;
+                                });
+                              }
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
+          ),
+
+
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // 창닫기
+                  },
+                  child: Text('취소'),
+                ),
+                ElevatedButton(
+                  child: Text('등록'),
+                  onPressed: () {
+                    setState(() {
+                      String title = titleController.text;
+                      String content = contentController.text;
+                    });
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          ],
+          backgroundColor: AppTheme.currentColorSet[0],
+        );
+      },
     );
   }
 
