@@ -8,6 +8,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'ColorScheme.dart';
+import 'package:http/http.dart' as http;
+
 
 class LayoutAppBar extends StatefulWidget {
   Function signIn;
@@ -20,7 +22,14 @@ class LayoutAppBar extends StatefulWidget {
   final Future<void> Function(Uint8List image)? onSharePressed;
   final Function(int) onJandiChanged;
 
-  LayoutAppBar({super.key, required this.signIn, required this.signOut, required this.loggedIn, required this.email, required this.share, this.onCapture, this.onSharePressed, required this.onJandiChanged});
+  final Function loaddb;
+  final Function writedb;
+  final Function makedb;
+
+  final Function fetch;
+  final Function upload;
+
+  LayoutAppBar({super.key, required this.signIn, required this.signOut, required this.loggedIn, required this.email, required this.share, this.onCapture, this.onSharePressed, required this.onJandiChanged, required this.loaddb, required this.writedb, required this.makedb, required this.fetch, required this.upload});
   @override
   LayoutAppBarState createState() => LayoutAppBarState();
 }
@@ -105,6 +114,10 @@ class LayoutAppBarState extends State<LayoutAppBar> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(backgroundColor: AppTheme.currentColorSet[2]),
                       onPressed: () {
+                        setState(() {
+                          widget.writedb();
+                          widget.upload(widget.email);
+                        });
                         Navigator.pop(context);
                       },
                       child: Text("저장하기", style: TextStyle(color: AppTheme.currentColorSet[0])),
@@ -115,6 +128,10 @@ class LayoutAppBarState extends State<LayoutAppBar> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(backgroundColor: AppTheme.currentColorSet[2]),
                       onPressed: () {
+                        setState(() {
+                          widget.fetch(widget.email);
+                          widget.loaddb();
+                        });
                         Navigator.pop(context);
                       },
                       child: Text("불러오기", style: TextStyle(color: AppTheme.currentColorSet[0])),
@@ -295,5 +312,6 @@ class LayoutBottomNavigationBarState extends State<LayoutBottomNavigationBar> {
       backgroundColor: AppTheme.currentColorSet[0],
     ): SizedBox.shrink();
   }
+
 
 }
