@@ -107,7 +107,7 @@ class LandingSceneState extends State<LandingScene> {
       backgroundColor: ColorSet['gray'],
       appBar: PreferredSize(
         preferredSize: AppBar().preferredSize, // Use the same size as a regular AppBar
-        child: LayoutAppBar(key: layout, signIn: signIn, signOut: signOut, loggedIn: loggedIn, email: email, share: currentIndex, onSharePressed: () => stat.currentState?.onShare()),
+        child: LayoutAppBar(key: layout, signIn: signIn, signOut: signOut, loggedIn: loggedIn, email: email, share: currentIndex, onCapture: stat.currentState?.captureImage, onSharePressed: stat.currentState?.onShare),
       ),
       body: currentIndex < _children.length ? _children[currentIndex] : const CircularProgressIndicator(),
       bottomNavigationBar: LayoutBottomNavigationBar(key: bottomNavBarKey, currentIndex: currentIndex, onTap: _onTap),

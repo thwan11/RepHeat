@@ -26,21 +26,21 @@ class StatisticsState extends State<Statistics> {
 
   ScreenshotController screenshotController = ScreenshotController();
 
-  void captureImage() async {
-    RenderRepaintBoundary boundary =
-    repaintBoundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+  Future<Uint8List> captureImage() async {
+    RenderRepaintBoundary boundary = repaintBoundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
     var image = await boundary.toImage();
     ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
     Uint8List pngBytes = byteData!.buffer.asUint8List();
 
-    // Now you can use these bytes to save, share, etc.
+    return pngBytes;
   }
-  void onShare() async {
+
+  Future<void> onShare(Uint8List pngBytes) async {
     try {
-      RenderRepaintBoundary boundary = repaintBoundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-      var image = await boundary.toImage();
-      ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
-      Uint8List pngBytes = byteData!.buffer.asUint8List();
+      // RenderRepaintBoundary boundary = repaintBoundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      // var image = await boundary.toImage();
+      // ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
+      // Uint8List pngBytes = byteData!.buffer.asUint8List();
 
       if (pngBytes != null) {
         final directory = await getTemporaryDirectory();

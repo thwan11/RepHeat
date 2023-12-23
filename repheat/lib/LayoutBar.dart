@@ -16,14 +16,63 @@ class LayoutAppBar extends StatefulWidget {
   String email;
   int share;
 
-  final VoidCallback? onSharePressed;
+  final Future<Uint8List?> Function()? onCapture;
+  final Future<void> Function(Uint8List image)? onSharePressed;
 
-  LayoutAppBar({super.key, required this.signIn, required this.signOut, required this.loggedIn, required this.email, required this.share, this.onSharePressed});
+  LayoutAppBar({super.key, required this.signIn, required this.signOut, required this.loggedIn, required this.email, required this.share, this.onCapture, this.onSharePressed});
   @override
   LayoutAppBarState createState() => LayoutAppBarState();
 }
 
 class LayoutAppBarState extends State<LayoutAppBar> {
+  Uint8List? _imageFile;
+
+  // Function to capture, show dialog, and share
+  void captureAndShare() async {
+    if (widget.onCapture != null) {
+      // Await the capture function if it's provided
+      _imageFile = await widget.onCapture!();
+    }
+
+    // Show dialog if image is captured
+    if (_imageFile != null) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5.0),
+              side: BorderSide(
+                color: ColorSet['white']!,
+                width: 1.0,
+              ),
+            ),
+            backgroundColor: ColorSet['black'],
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min, // Use min size for the dialog
+                children: [
+                  Image.memory(_imageFile!),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: ColorSet['white']),
+                    onPressed: () {
+                      // Call share function if provided and image is available
+                      if (widget.onSharePressed != null) {
+                        widget.onSharePressed!(_imageFile!);
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: Text("Share", style: TextStyle(color: ColorSet['black'])),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double baseWidth = 360;
@@ -49,8 +98,8 @@ class LayoutAppBarState extends State<LayoutAppBar> {
           const Spacer(),
           if(widget.share == 2)
             IconButton(
-              onPressed: widget.onSharePressed,
-              icon: Icon(Icons.share, color: ColorSet['white'])
+              onPressed: captureAndShare,
+              icon: Icon(Icons.share, color: ColorSet['white']),
             ),
           IconButton(
             onPressed: () {},
@@ -101,5 +150,5 @@ class LayoutBottomNavigationBarState extends State<LayoutBottomNavigationBar> {
       backgroundColor: ColorSet['black'],
     ): SizedBox.shrink();
   }
-  
+
 }
