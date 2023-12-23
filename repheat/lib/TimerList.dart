@@ -14,6 +14,15 @@ class TimerList extends StatefulWidget {
   TimerListState createState() => TimerListState();
 }
 
+class _subRoutine {
+  String subname;
+  int subh;
+  int submin;
+  int subsec;
+
+  _subRoutine({required this.subname, required this.subh, required this.submin, required this.subsec});
+}
+
 class TimerListState extends State<TimerList> {
   final GlobalKey<TimerState> timer = GlobalKey();
   int? selectedBoxIndex;
@@ -60,6 +69,10 @@ class TimerListState extends State<TimerList> {
 
   final TextEditingController titleController = TextEditingController();
   final TextEditingController contentController = TextEditingController();
+  final TextEditingController inputsubhour = TextEditingController();
+  final TextEditingController inputsubminute = TextEditingController();
+  final TextEditingController inputsubsecond = TextEditingController();
+  final TextEditingController inputsubname = TextEditingController();
 
   Future<void> addTimerEvent(BuildContext context) {
     return showDialog(
@@ -70,6 +83,8 @@ class TimerListState extends State<TimerList> {
         int setiter = 1;
         bool _isSound = false;
         bool _isVibrate = false;
+
+        List<_subRoutine> subroutines = [];
 
         return AlertDialog(
           shape: RoundedRectangleBorder(
@@ -216,16 +231,43 @@ class TimerListState extends State<TimerList> {
                           color: ColorSet['white'],
                         ),
                         ),
+                        TextField(//루틴 이름 입력
+                          onChanged: (value) {
+                            subroutines[index].subname = value;
+                          },
+
+                          maxLength: 2,
+                        ),
+                        TextField(//루틴 이름 입력
+                          style: TextStyle(
+                              fontSize: 30,
+                              color: ColorSet['white']
+                          ),
+                          controller: inputsubminute,
+                          maxLength: 2,
+                        ),
+                        TextField(//루틴 이름 입력
+                          style: TextStyle(
+                              fontSize: 30,
+                              color: ColorSet['white']
+                          ),
+                          controller: inputsubsecond,
+                          maxLength: 2,
+                        ),
+                        TextField(//루틴 이름 입력
+                          style: TextStyle(
+                              fontSize: 30,
+                              color: ColorSet['white']
+                          ),
+                          controller: inputsubname,
+                          maxLength: 8,
+                        ),
                         SizedBox(
                           width: 20,
                           height: 15,
                           child: ElevatedButton(
                             onPressed: () {
-                              if (setiter < 98) {
-                                setState(() {
-                                  setiter = setiter + 1;
-                                });
-                              };
+                              _addSubroutine();
                             },
                             child: Align(
                               alignment: Alignment.topLeft,
@@ -242,7 +284,22 @@ class TimerListState extends State<TimerList> {
                           ),
                         ),
                       ],
-                    )
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: subroutines.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text('${subroutines[index].subname} - ${subroutines[index].subh}:${subroutines[index].submin}:${subroutines[index].subsec}'),
+                            onTap: () {
+                              // 탭 시, 시간과 이름 변경하는 다이얼로그 표시
+                              _showEditDialog(index);
+                            },
+                          );
+                        },
+                      ),
+                    ),
+
                   ],
                 );
               }
@@ -276,6 +333,69 @@ class TimerListState extends State<TimerList> {
         );
       },
     );
+  }
+
+  // 타이머 편집 다이얼로그 표시
+  void _showEditDialog(int index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Edit Timer'),
+          content: Column(
+            children: [
+              // 이름 입력 필드
+              TextField(
+                onChanged: (value) {
+                  subroutines[index].name = value;
+                },
+                decoration: InputDecoration(labelText: 'Name'),
+              ),
+              // 시간 입력 필드
+              TextField(
+                onChanged: (value) {
+                  timers[index].hours = int.tryParse(value) ?? 0;
+                },
+                decoration: InputDecoration(labelText: 'Hours'),
+              ),
+              TextField(
+                onChanged: (value) {
+                  timers[index].minutes = int.tryParse(value) ?? 0;
+                },
+                decoration: InputDecoration(labelText: 'Minutes'),
+              ),
+              TextField(
+                onChanged: (value) {
+                  timers[index].seconds = int.tryParse(value) ?? 0;
+                },
+                decoration: InputDecoration(labelText: 'Seconds'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {});
+                Navigator.pop(context);
+              },
+              child: Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+
+void _addSubroutine() {
+    subroutines.add(_subRoutine(subname: inputsubname, subh: inputsubhour, submin: inputsubminute, subsec: inputsubsecond);
   }
 
   String timeToString(int time) {
